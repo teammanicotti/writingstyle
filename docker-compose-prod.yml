@@ -1,0 +1,11 @@
+version: '3.1'
+services:
+  web:
+    image: registry.gitlab.com/seniorprojectntid/seniorprojectntid:develop
+    secrets:
+      - sentry_url
+
+secrets:
+  sentry_url:
+    file: ./.sentry_dsn
+
