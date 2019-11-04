@@ -1,0 +1,15 @@
+# These are project-level dependencies.  For any module-specific ones, add it
+# to a `requirements.txt` file in that module and then put an entry to that
+# *file* here.  It's fine if indiviual modules' requirements overlap, so
+# make sure any dependency that would be needed for it to run independently
+# of the rest of the system is included.
+# Example: `-r semanticsimilarity/requirements.txt`
+gunicorn
+falcon
+pytest
+pylint
+pytest-cov
+sentry-sdk[falcon]==0.13.1
+# python-dotenv
+SQLAlchemy
+mysqlclient
