@@ -1,5 +1,5 @@
 """Represents a paragraph of a document."""
-from spacy.tokens.doc import Doc
+from spacy.tokens import Doc
 
 
 class Paragraph:

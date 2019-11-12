@@ -1,7 +1,4 @@
 """API entrypoint for `/analyze`"""
-import falcon
-
-from seniorproject.model.document import Document
 from seniorproject.recommendation.recommendationhandler import \
     RecommendationHandler
 from seniorproject.preprocessing.documentparser import DocumentParser
