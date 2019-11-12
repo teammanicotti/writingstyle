@@ -13,3 +13,4 @@ sentry-sdk[falcon]==0.13.1
 # python-dotenv
 SQLAlchemy
 mysqlclient
+-r recommendation/simpletocompound/requirements.txt
