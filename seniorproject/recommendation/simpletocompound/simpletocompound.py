@@ -54,16 +54,15 @@ class SimpleToCompound(RecommendationEngine):
         """
         results = []
         sentences = []
-        analyzed_paragraphs = [self.nlp(p.text) for p in doc.paragraphs]
-        for paragraph in analyzed_paragraphs:
-            for sent in paragraph.sents:
+        for paragraph in doc.paragraphs:
+            for sent in paragraph.spacy_doc.sents:
                 sent_type = self.sentence_type(sent)
                 sentences.append(
                     Sentence(
                         sent.text,
                         sent.start_char,
                         sent.end_char,
-                        analyzed_paragraphs.index(paragraph),
+                        doc.paragraphs.index(paragraph),
                         sent_type, sent
                     )
                 )
