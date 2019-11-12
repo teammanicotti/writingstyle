@@ -8,6 +8,7 @@ import falcon
 from falcon import media
 import sentry_sdk
 from sentry_sdk.integrations.falcon import FalconIntegration
+from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 from seniorproject.db.db_connector import DBConnector
 from seniorproject.endpoint.analyze_resource import AnalyzeResource
@@ -38,7 +39,10 @@ else:
     if Path('.sentry_dsn').exists():
         sentry_sdk.init(
             dsn=open('.sentry_dsn').read(),
-            integrations=[FalconIntegration()]
+            integrations=[
+                FalconIntegration(),
+                SqlalchemyIntegration()
+            ]
         )
 
 DB_CONNECTOR = DBConnector(f'mysql+mysqldb://{DB_USER}:{DB_PASSWORD}@{DB_URL}/{DB_NAME}')
