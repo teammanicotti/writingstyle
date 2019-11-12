@@ -1,6 +1,8 @@
 """Represents a document provided to the system."""
 from typing import List
 
+from spacy.tokens.doc import Doc
+
 from seniorproject.model.paragraph import Paragraph
 
 
@@ -9,6 +11,6 @@ class Document:
     text: str
     paragraphs: List[Paragraph]
 
-    def __init__(self, text: str, paragraphs: List[str]):
+    def __init__(self, text: str, paragraphs: List[Doc]):
         self.text = text
-        self.paragraphs = [Paragraph(p, paragraphs.index(p)) for p in paragraphs]
+        self.paragraphs = [Paragraph(p.text, paragraphs.index(p), p) for p in paragraphs]

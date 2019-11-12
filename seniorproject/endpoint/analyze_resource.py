@@ -1,8 +1,10 @@
 """API entrypoint for `/analyze`"""
+import falcon
 
 from seniorproject.model.document import Document
 from seniorproject.recommendation.recommendationhandler import \
     RecommendationHandler
+from seniorproject.preprocessing.documentparser import DocumentParser
 
 __author__ = 'Devon Welcheck'
 
@@ -12,8 +14,10 @@ class AnalyzeResource:
 
     def __init__(
             self,
+            document_paraser: DocumentParser,
             recommendation_handler: RecommendationHandler
     ):
+        self.document_parser = document_paraser
         self.recommendation_handler = recommendation_handler
 
     def on_post(self, req, resp) -> None:
@@ -23,6 +27,6 @@ class AnalyzeResource:
         :param resp: Falcon response object
         :return: None
         """
-        doc = Document(req.media['text'], req.media['paragraphs'])
+        doc = self.document_parser.parse_document(req.media['text'], req.media['paragraphs'])
         recs = self.recommendation_handler.collect_recommendations(doc)
         resp.media = {'results': recs}

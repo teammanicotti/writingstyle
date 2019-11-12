@@ -12,6 +12,7 @@ from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 from seniorproject.db.db_connector import DBConnector
 from seniorproject.endpoint.analyze_resource import AnalyzeResource
+from seniorproject.preprocessing.documentparser import DocumentParser
 from seniorproject.recommendation.recommendationhandler import \
     RecommendationHandler
 from seniorproject.sharedstate import sharedstate
@@ -53,9 +54,15 @@ RECOMMENDATION_HANDLER = RecommendationHandler(
     sharedstate.tf_input_placeholder,
     sharedstate.tf_sentence_piece_processor
 )
+DOCUMENT_PARSER = DocumentParser(
+    sharedstate.spacy_instance
+)
 
 API = falcon.API()
-API.add_route('/analyze', AnalyzeResource(RECOMMENDATION_HANDLER))
+API.add_route('/analyze', AnalyzeResource(
+    DOCUMENT_PARSER,
+    RECOMMENDATION_HANDLER,
+))
 
 JSON_HANDLER = media.JSONHandler(
     dumps=partial(
