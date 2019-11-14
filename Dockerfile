@@ -1,5 +1,5 @@
-#FROM tensorflow/tensorflow:latest-py3
-FROM python:3.6.9-slim
+FROM tensorflow/tensorflow:2.0.0-py3
+#FROM python:3.6.9-slim
 ADD . /seniorproject
 WORKDIR /seniorproject
 
