@@ -55,7 +55,7 @@ class SimpleToCompound(RecommendationEngine):
         results = []
         sentences = []
         for paragraph in doc.paragraphs:
-            if len(paragraph.spacy_doc.sents) < 2:
+            if len(list(paragraph.spacy_doc.sents)) < 2:
                 continue
             for sent in paragraph.spacy_doc.sents:
                 sent_type = self.sentence_type(sent)
