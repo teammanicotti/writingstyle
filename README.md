@@ -32,7 +32,7 @@ For any of the below methods, environment files need to be created to tell the
 application where to access the database and other resources.  The following
 environment files are needed:
 * `.db_name`
-* `.db_url`
+* `.db_url` (if using docker, simply put the value `database` in this file)
 * `.db_user`
 * `.db_password`
 * `.db_root_password` (if running in Docker)
