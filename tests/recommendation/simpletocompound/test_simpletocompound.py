@@ -1,24 +1,15 @@
-import itertools
-from unittest.mock import MagicMock
-
 import en_core_web_lg
 import pytest
 from spacy.language import Language
-from spacy.tokens.doc import Doc
-from spacy.tokens.span import Span
 
-from seniorproject.model.document import Document
-from seniorproject.model.paragraph import Paragraph
-from seniorproject.recommendation.recommendationhandler import \
-    RecommendationHandler
 from seniorproject.recommendation.simpletocompound.model.sentencetype import \
     SentenceType
 from seniorproject.recommendation.simpletocompound.simpletocompound import \
     SimpleToCompound
 
 
-# def duplicate_iter(iter):
-#     return
+from tests.util.model import *
+
 
 @pytest.fixture
 def simple_compound():
@@ -47,52 +38,33 @@ def spacy_instance():
 def single_sentence_paragraph():
     text = 'Mark went to the store.'
 
-    paragraph = MagicMock(spec=Paragraph)
-    spacy_doc = MagicMock(spec=Doc)
-
-    spacy_doc.sents.__iter__.side_effect = lambda: iter(
-        ['Mark went to the store.']
+    sentence1 = spacy_span_mock(
+        'Mark went to the store.'
     )
+    spacy_doc = spacy_doc_mock(
+        [sentence1]
+    )
+    paragraph = paragraph_mock(text, spacy_doc)
 
-    paragraph.text = text
-    paragraph.idx = 0
-    paragraph.spacy_doc = spacy_doc
-
-    document = MagicMock(spec=Document)
-    document.paragraphs = [paragraph]
-    document.text = text
-
-    return document
+    return document_mock(text, [paragraph])
 
 
 @pytest.fixture
 def simple_sentences():
     text = 'Mark went to the store. His mom did not have food for dinner.'
 
-    paragraph = MagicMock(spec=Paragraph)
-    spacy_doc = MagicMock(spec=Doc)
+    sentence1 = spacy_span_mock(
+        'Mark went to the store.'
+    )
+    sentence2 = spacy_span_mock(
+        'His mom did not have food for dinner.'
+    )
+    spacy_doc = spacy_doc_mock(
+        [sentence1, sentence2]
+    )
+    paragraph = paragraph_mock(text, spacy_doc)
 
-    sentence1 = MagicMock(spec=Span)
-    sentence1.text = 'Mark went to the store.'
-    sentence1.start_char = 0
-    sentence1.end_char = 0
-
-    sentence2 = MagicMock(spec=Span)
-    sentence2.text = 'His mom did not have food for dinner.'
-    sentence2.start_char = 0
-    sentence2.end_char = 0
-
-    spacy_doc.sents.__iter__.side_effect = lambda: iter([sentence1, sentence2])
-
-    paragraph.text = text
-    paragraph.idx = 0
-    paragraph.spacy_doc = spacy_doc
-
-    document = MagicMock(spec=Document)
-    document.paragraphs = [paragraph]
-    document.text = text
-
-    return document
+    return document_mock(text, [paragraph])
 
 
 @pytest.fixture
@@ -100,30 +72,18 @@ def simple_and_compound():
     text = 'Despite his efforts, John still failed his test. '
     'This lowered his grade.'
 
-    paragraph = MagicMock(spec=Paragraph)
-    spacy_doc = MagicMock(spec=Doc)
+    sentence1 = spacy_span_mock(
+        'Despite his efforts, John still failed his test.'
+    )
+    sentence2 = spacy_span_mock(
+        'This lowered his grade.'
+    )
+    spacy_doc = spacy_doc_mock(
+        [sentence1, sentence2]
+    )
+    paragraph = paragraph_mock(text, spacy_doc)
 
-    sentence1 = MagicMock(spec=Span)
-    sentence1.text = 'Despite his efforts, John still failed his test. '
-    sentence1.start_char = 0
-    sentence1.end_char = 0
-
-    sentence2 = MagicMock(spec=Span)
-    sentence2.text = 'This lowered his grade.'
-    sentence2.start_char = 0
-    sentence2.end_char = 0
-
-    spacy_doc.sents.__iter__.side_effect = lambda: iter([sentence1, sentence2])
-
-    paragraph.text = text
-    paragraph.idx = 0
-    paragraph.spacy_doc = spacy_doc
-
-    document = MagicMock(spec=Document)
-    document.paragraphs = [paragraph]
-    document.text = text
-
-    return document
+    return document_mock(text, [paragraph])
 
 
 def test_analyze_single_sentence_paragraph(
@@ -155,8 +115,8 @@ def test_analyze_simple_and_compound_sentence(
         simple_and_compound
 ):
     def sent_type(sentence):
-        if sentence == list(simple_and_compound.paragraphs[0].spacy_doc.sents)[
-            0]:
+        if sentence == list(
+                simple_and_compound.paragraphs[0].spacy_doc.sents)[0]:
             return SentenceType.SIMPLE
         else:
             return SentenceType.COMPLEX
@@ -165,13 +125,14 @@ def test_analyze_simple_and_compound_sentence(
 
     assert simple_compound.analyze(simple_and_compound) == []
 
+
 def test_sentence_type_simple(
         simple_compound,
         spacy_instance
 ):
     document = spacy_instance('I like tea.')
     assert simple_compound.sentence_type(list(document.sents)[0]) == \
-           SentenceType.SIMPLE
+       SentenceType.SIMPLE
 
 
 def test_sentence_type_compound(
@@ -180,7 +141,7 @@ def test_sentence_type_compound(
 ):
     document = spacy_instance('I like tea, and he likes coffee.')
     assert simple_compound.sentence_type(list(document.sents)[0]) == \
-           SentenceType.COMPOUND
+       SentenceType.COMPOUND
 
 
 def test_sentence_type_complex(
@@ -191,7 +152,7 @@ def test_sentence_type_complex(
         'When the kettle begins to whistle, you must take it off the stove.'
     )
     assert simple_compound.sentence_type(list(document.sents)[0]) == \
-           SentenceType.COMPLEX
+       SentenceType.COMPLEX
 
 
 def test_sentence_type_complex_compound(
@@ -203,4 +164,4 @@ def test_sentence_type_complex_compound(
         'pays his bills.'
     )
     assert simple_compound.sentence_type(list(document.sents)[0]) == \
-           SentenceType.COMPLEX_COMPOUND
+       SentenceType.COMPLEX_COMPOUND
