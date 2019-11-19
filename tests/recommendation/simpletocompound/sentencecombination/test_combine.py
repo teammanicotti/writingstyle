@@ -1,90 +1,115 @@
-# pylint: disable-all
-from unittest.mock import MagicMock
-
 import pytest
-from spacy.tokens.span import Span
-from spacy.tokens.token import Token
 
 from seniorproject.recommendation.simpletocompound.sentencecombination.combine import \
     Combine
+from tests.util.model import *
 
 
 @pytest.fixture
 def sentence1_mock():
-    token_mock = MagicMock(spec=Token)
-    token_mock.pos_ = 'PRON'
-    token_mock.text = 'He'
-
-    sentence_mock = MagicMock(spec=Span)
-    sentence_mock.text = 'He is watching videos.'
-    sentence_mock.__getitem__.return_value = token_mock
-
-    return sentence_mock
+    return spacy_span_mock(
+        'He is watching videos.',
+        0,
+        0,
+        [
+            spacy_token_mock('He', 'PRON'),
+            spacy_token_mock('is'),
+            spacy_token_mock('watching'),
+            spacy_token_mock('videos'),
+            spacy_token_mock('.')
+        ]
+    )
 
 
 @pytest.fixture
 def sentence2_mock():
-    token_mock = MagicMock(spec=Token)
-    token_mock.pos_ = 'PRON'
-    token_mock.text = 'He'
-
-    sentence_mock = MagicMock(spec=Span)
-    sentence_mock.text = 'She is listening to the lecture.'
-    sentence_mock.__getitem__.return_value = token_mock
-
-    return sentence_mock
+    return spacy_span_mock(
+        'She is listening to the lecture.',
+        0,
+        0,
+        [
+            spacy_token_mock('She', 'PRON'),
+            spacy_token_mock('is'),
+            spacy_token_mock('listening'),
+            spacy_token_mock('to'),
+            spacy_token_mock('the'),
+            spacy_token_mock('lecture'),
+            spacy_token_mock('.')
+        ]
+    )
 
 
 @pytest.fixture
 def sentence3_mock():
-    token_mock = MagicMock(spec=Token)
-    token_mock.pos_ = 'PRON'
-    token_mock.text = 'He'
-
-    sentence_mock = MagicMock(spec=Span)
-    sentence_mock.text = 'He was more than happy to help me out.'
-    sentence_mock.__getitem__.return_value = token_mock
-
-    return sentence_mock
+    return spacy_span_mock(
+        'He was more than happy to help me out.',
+        0,
+        0,
+        [
+            spacy_token_mock('He', 'PRON'),
+            spacy_token_mock('was'),
+            spacy_token_mock('more'),
+            spacy_token_mock('than'),
+            spacy_token_mock('happy'),
+            spacy_token_mock('to'),
+            spacy_token_mock('help'),
+            spacy_token_mock('me'),
+            spacy_token_mock('out'),
+            spacy_token_mock('.')
+        ]
+    )
 
 
 @pytest.fixture
 def sentence4_mock():
-    token_mock = MagicMock(spec=Token)
-    token_mock.pos_ = 'PRON'
-    token_mock.text = 'I'
-
-    sentence_mock = MagicMock(spec=Span)
-    sentence_mock.text = 'I really appreciated it.'
-    sentence_mock.__getitem__.return_value = token_mock
-
-    return sentence_mock
+    return spacy_span_mock(
+        'I really appreciated it.',
+        0,
+        0,
+        [
+            spacy_token_mock('I', 'PRON'),
+            spacy_token_mock('really'),
+            spacy_token_mock('appreciate'),
+            spacy_token_mock('it'),
+            spacy_token_mock('.')
+        ]
+    )
 
 
 @pytest.fixture
 def sentence5_mock():
-    token_mock = MagicMock(spec=Token)
-    token_mock.pos_ = 'PROPN'
-    token_mock.text = 'Jeff'
-
-    sentence_mock = MagicMock(spec=Span)
-    sentence_mock.text = 'Jeff wants to go to the store.'
-    sentence_mock.__getitem__.return_value = token_mock
-
-    return sentence_mock
+    return spacy_span_mock(
+        'Jeff wants to go to the store.',
+        0,
+        0,
+        [
+            spacy_token_mock('Jeff', 'PROPN'),
+            spacy_token_mock('wants'),
+            spacy_token_mock('to'),
+            spacy_token_mock('go'),
+            spacy_token_mock('to'),
+            spacy_token_mock('the'),
+            spacy_token_mock('store'),
+            spacy_token_mock('.')
+        ]
+    )
 
 
 @pytest.fixture
 def sentence6_mock():
-    token_mock = MagicMock(spec=Token)
-    token_mock.pos_ = 'PROPN'
-    token_mock.text = 'Carol'
-
-    sentence_mock = MagicMock(spec=Span)
-    sentence_mock.text = 'Carol wants to eat ice cream.'
-    sentence_mock.__getitem__.return_value = token_mock
-
-    return sentence_mock
+    return spacy_span_mock(
+        'Carol wants to eat ice cream.',
+        0,
+        0,
+        [
+            spacy_token_mock('Carol', 'PROPN'),
+            spacy_token_mock('wants'),
+            spacy_token_mock('to'),
+            spacy_token_mock('eat'),
+            spacy_token_mock('ice cream'),
+            spacy_token_mock('.')
+        ]
+    )
 
 
 def test_generate_combined_third_person_pronoun(sentence1_mock, sentence2_mock):

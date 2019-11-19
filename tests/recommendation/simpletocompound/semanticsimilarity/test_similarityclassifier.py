@@ -1,4 +1,3 @@
-# pylint: disable-all
 import pytest
 import tensorflow as tf
 import tensorflow_hub as hub
