@@ -11,7 +11,7 @@ COPY seniorproject/recommendation/simpletocompound/requirements.txt seniorprojec
 COPY seniorproject/recommendation/simpletocompound/semanticsimilarity/requirements.txt seniorproject/recommendation/simpletocompound/semanticsimilarity/requirements.txt
 
 # Install deps and spaCy model
-RUN apt-get -qq update; apt-get install -y -qq libmysqlclient-dev gcc > /dev/null
+RUN apt-get -qq update; apt-get install -y -qq libmysqlclient-dev libssl-dev gcc > /dev/null
 RUN python -m pip install -r seniorproject/requirements.txt --default-timeout=600 > /dev/null
 
 COPY . /seniorproject
