@@ -9,7 +9,7 @@ services:
     secrets:
       - db_name
       - db_url
-      - db_user
+      - db_usered
       - db_password
       - db_root_password
     environment:
