@@ -9,6 +9,8 @@ WORKDIR /seniorproject
 COPY seniorproject/requirements.txt seniorproject/requirements.txt
 COPY seniorproject/recommendation/simpletocompound/requirements.txt seniorproject/recommendation/simpletocompound/requirements.txt
 COPY seniorproject/recommendation/simpletocompound/semanticsimilarity/requirements.txt seniorproject/recommendation/simpletocompound/semanticsimilarity/requirements.txt
+COPY seniorproject/recommendation/passivetoactive/requirements.txt seniorproject/recommendation/passivetoactive/requirements.txt
+COPY seniorproject/recommendation/sentimentreversal/requirements.txt seniorproject/recommendation/sentimentreversal/requirements.txt
 
 # Install deps and spaCy model
 RUN apt-get -qq update; apt-get install -y -qq libmysqlclient-dev libssl-dev gcc > /dev/null

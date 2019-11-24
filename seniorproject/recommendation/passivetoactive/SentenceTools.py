@@ -1,8 +1,10 @@
 import re
 import string
-class SentenceTools():
+
+
+class SentenceTools:
     @staticmethod
-    def ConvertPronoun(pronoun):
+    def convert_pronoun(pronoun):
         if pronoun == "me":
             return "i"
         elif pronoun == "him":
@@ -15,68 +17,80 @@ class SentenceTools():
             return pronoun
 
     @staticmethod
-    def GetObjectOfPrep(parsedSentence):
-        for word in parsedSentence:
-            if "pobj" == word.dep_ and word.pos_ in ["PRON", "NOUN", "PROPN"] and word.head.dep_ == "agent":
+    def get_object_of_prep(parsed_sentence):
+        for word in parsed_sentence:
+            if "pobj" == word.dep_ and word.pos_ in ["PRON", "NOUN", "PROPN"] \
+                    and word.head.dep_ == "agent":
                 x = str(word.doc[word.left_edge.i: word.right_edge.i + 1])
                 return x
 
     @staticmethod
-    def GetVerbModifier(parsedSentence):
-        for word in parsedSentence:
+    def get_verb_modifier(parsed_sentence):
+        for word in parsed_sentence:
             if 'npadvmod' == word.dep_:
                 return str(word.doc[word.left_edge.i: word.right_edge.i + 1])
         return ""
 
     @staticmethod
-    def GetPrepositions(parsedSentence):
+    def get_prepositions(parsed_sentence):
         prepositions = []
-        for word in parsedSentence:
+        for word in parsed_sentence:
             if word.dep_ == 'prep':
-                prepositions.append(str(word.doc[word.left_edge.i: word.right_edge.i + 1]))
+                prepositions.append(
+                    str(word.doc[word.left_edge.i: word.right_edge.i + 1])
+                )
         return prepositions
 
     @staticmethod
-    def GetDO(parsedSentence):
-        directObject = ""
-        for word in parsedSentence:
+    def get_direct_object(parsed_sentence):
+        direct_object = ""
+        for word in parsed_sentence:
             if word.dep_ == 'dobj':
-                directObject = str(word.doc[word.left_edge.i: word.right_edge.i + 1])
-        return directObject
+                direct_object = str(
+                    word.doc[word.left_edge.i: word.right_edge.i + 1]
+                )
+        return direct_object
 
     @staticmethod
-    def GetAdverb(verb, parsedSentence):
+    def get_adverb(verb, parsed_sentence):
         adv = ""
-        for word in parsedSentence:
+        for word in parsed_sentence:
             if word.lemma_ == verb and word.doc[word.i - 1].dep_ == "advmod":
                 adv = str(word.doc[word.i - 1].text)
         return adv
 
     @staticmethod
-    def GetCitation(parsedSentence):
+    def get_citation(parsed_sentence):
         left = 0
         right = 0
-        if parsedSentence[-1].text in ["]", ")"] or parsedSentence[-2].text in ["]", ")"]:
-            for i in range(parsedSentence[-1].i, 0, -1):
-                if(parsedSentence[i].is_bracket and right == 0):
+        if parsed_sentence[-1].text in ["]", ")"] or \
+                parsed_sentence[-2].text in ["]", ")"]:
+            for i in range(parsed_sentence[-1].i, 0, -1):
+                if parsed_sentence[i].is_bracket and right == 0:
                     right = i
-                elif(parsedSentence[i].is_bracket and right > 0):
+                elif parsed_sentence[i].is_bracket and right > 0:
                     left = i
                     break
-            return str(parsedSentence.doc[left : right + 1])
+            return str(parsed_sentence.doc[left: right + 1])
         return ""
 
     @staticmethod
-    def GetSubject(parsedSentence):
-        for word in parsedSentence:
+    def get_subject(parsed_sentence):
+        for word in parsed_sentence:
             if "subj" in word.dep_:
-                x = str(word.doc[word.left_edge.i : word.right_edge.i + (2 if word.doc[word.right_edge.i+1].is_right_punct else 1)])
+                x = str(
+                    word.doc[
+                    word.left_edge.i: word.right_edge.i + (
+                        2 if word.doc[word.right_edge.i + 1].is_right_punct
+                        else 1)
+                    ]
+                )
                 return x
 
     @staticmethod
-    def GetVerb(parsedSentence):
+    def get_verb(parsed_sentence):
         verb = ""
-        for word in parsedSentence:
+        for word in parsed_sentence:
             if word.pos_ == "VERB":
                 if word.dep_ == "ROOT":
                     verb = word.lemma_
@@ -85,42 +99,48 @@ class SentenceTools():
                     verb = word.lemma_
         return verb
 
-
     @staticmethod
-    def BuildSentenceFromList(parsedSentence, components, punct):
+    def build_sentence_from_list(parsed_sentence, components, punct):
         sentence = ' '.join(word for word in components)
-        return SentenceTools.ApplyCapitalizations(parsedSentence, sentence) + punct
+        return SentenceTools.apply_capitalizations(parsed_sentence, sentence) \
+               + punct
 
     @staticmethod
-    def ApplyCapitalizations(parsedSentence, recommendation):
+    def apply_capitalizations(parsed_sentence, recommendation):
         recommendation = recommendation.lower()
-        phrasesToBeCapitalized = []
+        phrases_to_be_capitalized = []
         compounds = []
 
-        #Extract all substrings that need to be capitalized
-        currentPosition = 0
-        for i in range(len(parsedSentence)):
-            if i < currentPosition:
+        # Extract all substrings that need to be capitalized
+        current_position = 0
+        for i in range(len(parsed_sentence)):
+            if i < current_position:
                 continue
 
-            if parsedSentence[i].ent_type_ == "WORK_OF_ART":
+            if parsed_sentence[i].ent_type_ == "WORK_OF_ART":
                 substring = ""
-                while parsedSentence[i].ent_type_ == "WORK_OF_ART":
-                    substring += parsedSentence[i].text
-                    substring += (" " if parsedSentence[i+1].pos_ not in ["PUNCT", "PART"] else "")
+                while parsed_sentence[i].ent_type_ == "WORK_OF_ART":
+                    substring += parsed_sentence[i].text
+                    substring += (" " if parsed_sentence[i + 1].pos_
+                                  not in ["PUNCT", "PART"] else "")
                     i += 1
-                currentPosition = i
-                phrasesToBeCapitalized.append(substring.strip())
-            elif parsedSentence[i].pos_ == "PROPN":
-                phrasesToBeCapitalized.append(
-                    str(parsedSentence.doc[parsedSentence[i].left_edge.i: parsedSentence[i].right_edge.i + 1]))
-                if parsedSentence[i].dep_ == "compound":
-                        compounds.append(parsedSentence[i].text)
-                currentPosition = parsedSentence[i].right_edge.i + 2
+                current_position = i
+                phrases_to_be_capitalized.append(substring.strip())
+            elif parsed_sentence[i].pos_ == "PROPN":
+                phrases_to_be_capitalized.append(
+                    str(parsed_sentence.doc[
+                        parsed_sentence[i].left_edge.i: parsed_sentence[
+                                                            i].right_edge.i + 1]))
+                if parsed_sentence[i].dep_ == "compound":
+                    compounds.append(parsed_sentence[i].text)
+                current_position = parsed_sentence[i].right_edge.i + 2
 
-        #Swap all those substring with properly capitalized versions
-        for phrase in phrasesToBeCapitalized:
-            recommendation = re.sub(phrase.lower(), string.capwords(phrase), recommendation)
+        # Swap all those substring with properly capitalized versions
+        for phrase in phrases_to_be_capitalized:
+            recommendation = re.sub(phrase.lower(), string.capwords(phrase),
+                                    recommendation)
+
+        # TODO: Why is this here? ~Devon
         # for phrase in compounds:
         #     recommendation = re.sub(phrase.lower(), phrase.upper(), recommendation, flags=re.I)
         return recommendation[0].upper() + recommendation[1:]
