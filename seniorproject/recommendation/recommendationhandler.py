@@ -10,8 +10,10 @@ from seniorproject.recommendation.simpletocompound.simpletocompound import \
 from seniorproject.recommendation.passivetoactive import passivetoactive
 from seniorproject.recommendation.sentimentreversal import sentimentreversal
 
+
 class RecommendationHandler:
     """Compiles overall list of recommendations from various engines."""
+
     def __init__(
             self,
             spacy_instance,
