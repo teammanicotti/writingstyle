@@ -4,6 +4,8 @@ and generate new sentences in the active voice
 Author: Robert Liedka (rl5849)
 """
 import re
+import sentry_sdk
+from sentry_sdk import capture_exception
 from seniorproject.recommendation.passivetoactive.SentenceTools import \
     SentenceTools
 from seniorproject.recommendation.recommendationengine import \
@@ -15,6 +17,7 @@ from seniorproject.model.recommendation import Recommendation
 from seniorproject.model.document import Document
 from typing import List
 
+sentry_sdk.init("https://b1a5322b89894d68805560c7759c0b99@sentry.io/1804379")
 
 class PassiveAnalyzer(RecommendationEngine):
 
@@ -89,66 +92,77 @@ class PassiveAnalyzer(RecommendationEngine):
             punct = parsed_sentence[-1].text
 
         actor = SentenceTools.get_object_of_prep(parsed_sentence)
-        verb = SentenceTools.get_verb(parsed_sentence)
-        subject = SentenceTools.get_subject(parsed_sentence)
+        new_actor = ""
+        if actor:
+            new_actor = SentenceTools.convert_pronoun(actor)
 
         new_sentence = []
-        new_actor = ""
-        new_verb = ""
+        sentence = ""
+        verb = SentenceTools.get_verb(parsed_sentence)
+        subject = SentenceTools.get_subject(parsed_sentence)
         adverb = SentenceTools.get_adverb(verb, parsed_sentence)
         citation = SentenceTools.get_citation(parsed_sentence)
         direct_obj = SentenceTools.get_direct_object(parsed_sentence)
+        new_verb = PassiveAnalyzer.conjugate(verb)
 
-        if verb:
-            try:
-                new_verb = conjugate(verb=verb, tense=PAST, number=PL)
-            except StopIteration:
-                new_verb = verb
-        if actor:
-            new_actor = SentenceTools.convert_pronoun(actor)
-        sentence = ""
         if new_actor and new_verb and subject:
-            new_sentence.append(new_actor)
-            if adverb != "":
-                new_sentence.append(adverb)
-            new_sentence.append(new_verb)
-            new_sentence.append(subject)
-            if direct_obj != "":
-                new_sentence.append(direct_obj)
-            modifier = SentenceTools.get_verb_modifier(parsed_sentence)
-            if modifier != "":
-                new_sentence.append(modifier)
-            preps = SentenceTools.get_prepositions(parsed_sentence)
-            if len(preps) != 0:
-                for prep in preps:
-                    present = False
-                    for component in new_sentence:
-                        if prep in component:
-                            present = True
-                    if not present:
-                        new_sentence.append(prep)
-            if citation != "":
-                new_sentence.append(citation)
-
-            if citation != "":
-                for i in range(len(new_sentence)):
-                    if new_sentence[i] != citation:
-                        new_sentence[i] = re.sub("\s*" + re.escape(citation),
-                                                 "",
-                                                 new_sentence[i])
-
-            sentence = SentenceTools.build_sentence_from_list(parsed_sentence,
-                                                              new_sentence, punct)
+            sentence = PassiveAnalyzer.assemble_new_sentence(parsed_sentence, new_actor, adverb, new_verb, subject, direct_obj, citation, punct)
         elif new_actor and new_verb:
             new_sentence.append(new_actor)
             new_sentence.append(new_verb)
-            sentence = "Consider rephrasing so that the actor is doing the "
-            "activity... " + SentenceTools.build_sentence_from_list(
+            sentence = SentenceTools.build_sentence_from_list(
                 parsed_sentence, new_sentence, "...")
         elif subject and new_verb:
             new_sentence.append(subject)
             new_sentence.append(new_verb)
-            sentence = "Consider rephrasing so that the subject comes before "
-            "the verb... " + SentenceTools.build_sentence_from_list(
+            sentence = SentenceTools.build_sentence_from_list(
                 parsed_sentence, new_sentence, "...")
         return [sentence]
+
+
+    @staticmethod
+    def conjugate(verb):
+        try:
+            new_verb = conjugate(verb=verb, tense=PAST, number=PL)
+            return new_verb
+        except Exception as e:
+            capture_exception(e)
+            sentry_sdk.add_breadcrumb(
+                category='conjugation',
+                message='Patterns conjugation failed'
+            )
+
+    @staticmethod
+    def assemble_new_sentence(parsed_sentence, new_actor, adverb, new_verb, subject, direct_obj, citation, punct):
+        new_sentence = []
+        new_sentence.append(new_actor)
+        if adverb != "":
+            new_sentence.append(adverb)
+        new_sentence.append(new_verb)
+        new_sentence.append(subject)
+        if direct_obj != "":
+            new_sentence.append(direct_obj)
+        modifier = SentenceTools.get_verb_modifier(parsed_sentence)
+        if modifier != "":
+            new_sentence.append(modifier)
+        preps = SentenceTools.get_prepositions(parsed_sentence)
+        if len(preps) != 0:
+            for prep in preps:
+                present = False
+                for component in new_sentence:
+                    if prep in component:
+                        present = True
+                if not present:
+                    new_sentence.append(prep)
+        if citation != "":
+            new_sentence.append(citation)
+
+        if citation != "":
+            for i in range(len(new_sentence)):
+                if new_sentence[i] != citation:
+                    new_sentence[i] = re.sub("\s*" + re.escape(citation),
+                                             "",
+                                             new_sentence[i])
+
+        return SentenceTools.build_sentence_from_list(parsed_sentence,
+                                                          new_sentence, punct)
