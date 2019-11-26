@@ -51,26 +51,13 @@ class SentimentReversal(RecommendationEngine):
                 ants = SentimentReversal.get_antonyms_for_word(
                     sentence[word.i - sentence[0].i + 1].text)
                 if len(ants) > 0:
-                    rec_text = ""
-                    old_val = word.text + " " + sentence[
-                        word.i - sentence[0].i + 1].text
-                    if len(ants) == 1:
-                        rec_text = "Consider changing '{}' to {}.".format(
-                            old_val, ants[0])
-                    elif len(ants) == 2:
-                        rec_text = "Consider changing '{}' to {} or {}".format(
-                            old_val, ants[0], ants[1])
-                    elif len(ants) > 2:
-                        rec_text = "Consider changing '{}' to {}, {} or {}"\
-                            .format(old_val, ants[0], ants[1], ants[2])
-
                     results.append(Recommendation(
                         RecommendationType.SENTIMENT_REVERSAL,
                         "not " + sentence[word.i - sentence[0].i + 1].text,
                         word.i,  # word start index
                         word.i + 1,  # edge end index
                         sentence_index,  # sentence index
-                        [rec_text],
+                        ants,
                         0  # Confidence
                     ))
         return results
