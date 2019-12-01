@@ -24,20 +24,20 @@ class SentimentReversal(RecommendationEngine):
         :return: List of recommendations
         """
         results = []
-        sent_index = 0
+        para_index = 0
         for paragraph in doc.paragraphs:
             for sent in paragraph.spacy_doc.sents:
                 results.extend(
                     SentimentReversal.get_antonyms_for_sentence(
                         sent,
-                        sent_index
+                        para_index
                     )
                 )
-                sent_index += 1
+            para_index += 1
         return results
 
     @staticmethod
-    def get_antonyms_for_sentence(sentence, sentence_index):
+    def get_antonyms_for_sentence(sentence, paragraph_index):
         """
         Generate recommendations for a sentence
         :param sentence: a spaCy sentence object
@@ -56,7 +56,7 @@ class SentimentReversal(RecommendationEngine):
                         "not " + sentence[word.i - sentence[0].i + 1].text,
                         word.i,  # word start index
                         word.i + 1,  # edge end index
-                        sentence_index,  # sentence index
+                        paragraph_index,  # paragraph index
                         ants,
                         0  # Confidence
                     ))

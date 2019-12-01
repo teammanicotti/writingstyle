@@ -31,46 +31,46 @@ class PassiveAnalyzer(RecommendationEngine):
         :return: Recommendation[]
         """
         results = []
-        sentIndex = 0
+        paragraph_index = 0
         for paragraph in doc.paragraphs:
             for sent in paragraph.spacy_doc.sents:
                 results.extend(
-                    PassiveAnalyzer.annotateSentence(sent, sentIndex))
-                sentIndex += 1
+                    PassiveAnalyzer.annotateSentence(sent, paragraph_index))
+            paragraph_index += 1
         return results
 
     @staticmethod
-    def annotateSentence(sentence, index):
+    def annotateSentence(sentence, paragraph_index):
         """
         Annotate sentence: Perform passive analysis and generate new sentence
         if passive
         :param sentence:
-        :param index:
+        :param paragraph_index:
         :return: Recommendation[], empty array if not passive
         """
         results = []
         is_passive = False
         is_hard = False
-        reccomend_phrases = {}
+        recommend_phrases = {}
 
         for word in sentence:
             if word.dep_ == "nsubjpass":
                 is_passive = True
             elif word.dep_ == "auxpass":
-                reccomend_phrases[word.text + " " + word.head.text] = {
+                recommend_phrases[word.text + " " + word.head.text] = {
                     "index": word.head.i}
                 is_passive = True
             elif word.pos_ == "ADP" and word.right_edge.dep_ == "pobj":
                 is_hard = True
 
         if is_passive:
-            for rec, info in reccomend_phrases.items():
+            for rec, info in recommend_phrases.items():
                 results.append(Recommendation(
                     RecommendationType.PASSIVE_TO_ACTIVE,
                     rec,
                     sentence.start,
                     sentence.end,
-                    index,  # sentence index
+                    paragraph_index,  # paragraph index
                     PassiveAnalyzer.create_new_sentence(sentence),
                     0  # Confidence
                 ))
