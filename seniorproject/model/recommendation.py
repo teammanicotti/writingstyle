@@ -1,9 +1,7 @@
 """Represents a recommendation made by a recommendation engine."""
-from typing import List
-
-from seniorproject.model.recommendationtype import RecommendationType
 import uuid
-import random
+from typing import List
+from seniorproject.model.recommendationtype import RecommendationType
 
 class Recommendation:
     """Represents a recommendation made by a recommendation engine."""
