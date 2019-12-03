@@ -32,6 +32,7 @@ class SimpleToCompound(RecommendationEngine):
             tf_input_placeholder,
             tf_sentence_piece_processor
     ):
+        super(SimpleToCompound, self).__init__()
         self.nlp = spacy_instance
         self.similarity_classifier = \
             similarityclassifier.SimilarityClassifier(

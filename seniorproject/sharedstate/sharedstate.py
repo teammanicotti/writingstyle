@@ -47,4 +47,5 @@ def init_tf():
 
 
 spacy_instance: Language = en_core_web_lg.load()
-tf_session, tf_encodings, tf_input_placeholder, tf_sentence_piece_processor = init_tf()
+tf_session, tf_encodings, tf_input_placeholder, tf_sentence_piece_processor = \
+    init_tf()

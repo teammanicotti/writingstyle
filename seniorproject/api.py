@@ -52,7 +52,7 @@ RECOMMENDATION_HANDLER = RecommendationHandler(
     sharedstate.tf_session,
     sharedstate.tf_encodings,
     sharedstate.tf_input_placeholder,
-    sharedstate.tf_sentence_piece_processor
+    sharedstate.tf_sentence_piece_processor,
 )
 DOCUMENT_PARSER = DocumentParser(
     sharedstate.spacy_instance
