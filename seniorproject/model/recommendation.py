@@ -1,8 +1,7 @@
 """Represents a recommendation made by a recommendation engine."""
+import uuid
 from typing import List
-
 from seniorproject.model.recommendationtype import RecommendationType
-
 
 class Recommendation:
     """Represents a recommendation made by a recommendation engine."""
@@ -22,7 +21,7 @@ class Recommendation:
             end_offset: int,
             paragraph_index: int,
             new_values: List[str],
-            confidence: float = None
+            confidence: float = None,
     ):
         self.recommendation_type = recommendation_type
         self.original_text = original_text
@@ -31,6 +30,7 @@ class Recommendation:
         self.paragraph_index = paragraph_index
         self.new_values = new_values
         self.confidence = confidence
+        self.uuid = str(uuid.uuid4())
 
     def to_json(self):
         """Creates a JSON-compatible representation of the recommendation."""

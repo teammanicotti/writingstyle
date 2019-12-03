@@ -7,17 +7,20 @@ from seniorproject.recommendation.recommendationengine import \
     RecommendationEngine
 from seniorproject.recommendation.simpletocompound.simpletocompound import \
     SimpleToCompound
+from seniorproject.recommendation.passivetoactive import passivetoactive
+from seniorproject.recommendation.sentimentreversal import sentimentreversal
 
 
 class RecommendationHandler:
     """Compiles overall list of recommendations from various engines."""
+
     def __init__(
             self,
             spacy_instance,
             tf_session,
             tf_encodings,
             tf_input_placeholder,
-            tf_sentence_piece_processor
+            tf_sentence_piece_processor,
     ):
         self.recommendation_engines: List[RecommendationEngine] = [
             SimpleToCompound(
@@ -26,7 +29,9 @@ class RecommendationHandler:
                 tf_encodings,
                 tf_input_placeholder,
                 tf_sentence_piece_processor
-            )
+            ),
+            passivetoactive.PassiveAnalyzer(),
+            sentimentreversal.SentimentReversal()
         ]
 
     def collect_recommendations(self, doc: Document) -> List[Recommendation]:
@@ -36,5 +41,6 @@ class RecommendationHandler:
         """
         recommendations = []
         for engine in self.recommendation_engines:
-            recommendations += engine.analyze(doc)
+            recommendations += engine.analyze(doc=doc)
+
         return recommendations
