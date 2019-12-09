@@ -7,3 +7,5 @@ class RecommendationType(str, Enum):
     SIMPLE_TO_COMPOUND = 'SimpleToCompound'
     PASSIVE_TO_ACTIVE = 'PassiveToActive'
     SENTIMENT_REVERSAL = 'SentimentReversal'
+    COMPARATIVE = 'Comparative'
+    SUPERLATIVE = 'Superlative'
