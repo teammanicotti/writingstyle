@@ -6,7 +6,6 @@ from tests.util.model import *
 passiveAnalyzer = PassiveAnalyzer
 from tests.util.model import *
 
-
 @pytest.fixture
 def passive_to_active():
     spacy_instance = MagicMock(spec=Language)
