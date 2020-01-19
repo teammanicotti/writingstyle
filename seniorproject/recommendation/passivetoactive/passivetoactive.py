@@ -17,10 +17,8 @@ from seniorproject.model.recommendation import Recommendation
 from seniorproject.model.document import Document
 from typing import List
 
-sentry_sdk.init("https://b1a5322b89894d68805560c7759c0b99@sentry.io/1804379")
 
 class PassiveAnalyzer(RecommendationEngine):
-
     def __init__(self):
         super(PassiveAnalyzer, self).__init__()
 
@@ -106,7 +104,16 @@ class PassiveAnalyzer(RecommendationEngine):
         new_verb = PassiveAnalyzer.conjugate(verb)
 
         if new_actor and new_verb and subject:
-            sentence = PassiveAnalyzer.assemble_new_sentence(parsed_sentence, new_actor, adverb, new_verb, subject, direct_obj, citation, punct)
+            sentence = PassiveAnalyzer.assemble_new_sentence(
+                parsed_sentence,
+                new_actor,
+                adverb,
+                new_verb,
+                subject,
+                direct_obj,
+                citation,
+                punct
+            )
         elif new_actor and new_verb:
             new_sentence.append(new_actor)
             new_sentence.append(new_verb)
@@ -118,7 +125,6 @@ class PassiveAnalyzer(RecommendationEngine):
             sentence = SentenceTools.build_sentence_from_list(
                 parsed_sentence, new_sentence, "...")
         return [sentence]
-
 
     @staticmethod
     def conjugate(verb):
@@ -133,7 +139,16 @@ class PassiveAnalyzer(RecommendationEngine):
             )
 
     @staticmethod
-    def assemble_new_sentence(parsed_sentence, new_actor, adverb, new_verb, subject, direct_obj, citation, punct):
+    def assemble_new_sentence(
+            parsed_sentence,
+            new_actor,
+            adverb,
+            new_verb,
+            subject,
+            direct_obj,
+            citation,
+            punct
+    ):
         new_sentence = []
         new_sentence.append(new_actor)
         if adverb != "":
@@ -164,5 +179,8 @@ class PassiveAnalyzer(RecommendationEngine):
                                              "",
                                              new_sentence[i])
 
-        return SentenceTools.build_sentence_from_list(parsed_sentence,
-                                                          new_sentence, punct)
+        return SentenceTools.build_sentence_from_list(
+            parsed_sentence,
+            new_sentence,
+            punct
+        )
