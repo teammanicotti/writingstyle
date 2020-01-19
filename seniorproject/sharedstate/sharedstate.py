@@ -1,5 +1,5 @@
 """Contains state shared between WSGI forks"""
-import en_core_web_lg
+import en_core_web_sm
 import tensorflow as tf
 import tensorflow_hub as hub
 import sentencepiece as spm
@@ -46,6 +46,6 @@ def init_tf():
     return session, encodings, input_placeholder, sentence_piece_processor
 
 
-spacy_instance: Language = en_core_web_lg.load()
+spacy_instance: Language = en_core_web_sm.load()
 tf_session, tf_encodings, tf_input_placeholder, tf_sentence_piece_processor = \
     init_tf()
