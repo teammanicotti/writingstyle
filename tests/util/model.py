@@ -69,5 +69,7 @@ def spacy_span_mock(
     span.end_char = end_char
     if tokens is not None:
         span.__getitem__.side_effect = lambda x: tokens[x]
-    span.__iter__.side_effect = lambda: iter(tokens)
+        span.__iter__.side_effect = lambda: iter(tokens)
+    else:
+        span.__iter__.side_effect = lambda: iter([])
     return span
