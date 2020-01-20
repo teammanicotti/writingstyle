@@ -16,7 +16,7 @@ def sentence_to_doc_mock(paras_string, sentences_string, pos_map):
                     list(
                         map(
                             lambda word:
-                                spacy_token_mock(word, 'ADJ'),#pos_map.get(word, '')),
+                                spacy_token_mock(word, pos_map.get(word, '')),
                                 sentence.split()
                         )
                     )
@@ -45,7 +45,8 @@ def test_no_recs():
     ]
     test_doc = sentence_to_doc_mock(
         [" ".join(para1_sentences)],
-        para1_sentences
+        para1_sentences,
+        {}
     )
     findings = anal.analyze(test_doc)
 
@@ -75,7 +76,8 @@ def test_super_rec():
     ]
     test_doc = sentence_to_doc_mock(
         [" ".join(para1_sentences)],
-        para1_sentences
+        para1_sentences,
+        {}
     )
     findings = anal.analyze(test_doc)
 
@@ -88,7 +90,8 @@ def test_comp_super_recs():
     ]
     test_doc = sentence_to_doc_mock(
         [" ".join(para1_sentences)],
-        para1_sentences
+        para1_sentences,
+        {}
     )
     findings = anal.analyze(test_doc)
 
