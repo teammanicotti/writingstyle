@@ -76,3 +76,4 @@ EXTRA_HANDLERS = {
 }
 API.req_options.media_handlers.update(EXTRA_HANDLERS)
 API.resp_options.media_handlers.update(EXTRA_HANDLERS)
+print("Ready.")
