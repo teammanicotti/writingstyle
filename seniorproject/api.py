@@ -1,16 +1,10 @@
 """Entry into the API system."""
 import json
-import os
 from functools import partial
-from pathlib import Path
 
 import falcon
 from falcon import media
-import sentry_sdk
-from sentry_sdk.integrations.falcon import FalconIntegration
-from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
-from seniorproject.db.db_connector import DBConnector
 from seniorproject.endpoint.analyze_resource import AnalyzeResource
 from seniorproject.preprocessing.documentparser import DocumentParser
 from seniorproject.recommendation.recommendationhandler import \
