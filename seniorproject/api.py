@@ -46,7 +46,7 @@ else:
             ]
         )
 
-DB_CONNECTOR = DBConnector(f'mysql+mysqldb://{DB_USER}:{DB_PASSWORD}@{DB_URL}/{DB_NAME}')
+# DB_CONNECTOR = DBConnector(f'mysql+mysqldb://{DB_USER}:{DB_PASSWORD}@{DB_URL}/{DB_NAME}')
 RECOMMENDATION_HANDLER = RecommendationHandler(
     sharedstate.spacy_instance,
     sharedstate.tf_session,
