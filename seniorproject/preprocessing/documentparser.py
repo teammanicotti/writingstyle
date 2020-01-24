@@ -1,5 +1,4 @@
 """Parses document text received through spaCy pipeline and into model"""
-import re
 from typing import List
 
 from seniorproject.model.document import Document

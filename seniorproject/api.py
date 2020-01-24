@@ -10,7 +10,6 @@ import sentry_sdk
 from sentry_sdk.integrations.falcon import FalconIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
-from seniorproject.db.db_connector import DBConnector
 from seniorproject.endpoint.analyze_resource import AnalyzeResource
 from seniorproject.preprocessing.documentparser import DocumentParser
 from seniorproject.recommendation.recommendationhandler import \
@@ -46,7 +45,6 @@ else:
             ]
         )
 
-# DB_CONNECTOR = DBConnector(f'mysql+mysqldb://{DB_USER}:{DB_PASSWORD}@{DB_URL}/{DB_NAME}')
 RECOMMENDATION_HANDLER = RecommendationHandler(
     sharedstate.spacy_instance,
     sharedstate.tf_session,
