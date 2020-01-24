@@ -2,8 +2,8 @@
 import re
 from itertools import zip_longest
 
-from spacy.tokens.span import Span
-from spacy.tokens.token import Token
+from spacy.tokens.span import Span  # pylint: disable=no-name-in-module
+from spacy.tokens.token import Token  # pylint: disable=no-name-in-module
 
 # In theory, we should be able to set the 'SENT_START' attribute here,
 # but since the method the retokenizer uses a `uint_64` parameter to
