@@ -84,7 +84,7 @@ class PassiveAnalyzer(RecommendationEngine):
         """
         # Questions never come out right
         if parsed_sentence[-1].text == "?":
-            return ""
+            return "Questions phrase recommendations are not supported."
         punct = "."
         if parsed_sentence[-1].is_punct:
             punct = parsed_sentence[-1].text

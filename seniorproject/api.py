@@ -1,6 +1,7 @@
 """Entry into the API system."""
 import json
 import os
+import logging
 from functools import partial
 from pathlib import Path
 
@@ -18,6 +19,7 @@ from seniorproject.recommendation.recommendationhandler import \
 from seniorproject.sharedstate import sharedstate
 from seniorproject.util.recommendationjsonencoder import \
     RecommendationJsonEncoder
+from seniorproject.endpoint.recommendation_ack import RecommendationAcknowledger
 
 __author__ = 'Devon Welcheck'
 
@@ -45,6 +47,7 @@ else:
                 SqlalchemyIntegration()
             ]
         )
+logging.basicConfig(filename='quality.log',level=logging.INFO)
 
 DB_CONNECTOR = DBConnector(f'mysql+mysqldb://{DB_USER}:{DB_PASSWORD}@{DB_URL}/{DB_NAME}')
 RECOMMENDATION_HANDLER = RecommendationHandler(
@@ -63,6 +66,7 @@ API.add_route('/analyze', AnalyzeResource(
     DOCUMENT_PARSER,
     RECOMMENDATION_HANDLER,
 ))
+API.add_route('/recAck', RecommendationAcknowledger())
 
 JSON_HANDLER = media.JSONHandler(
     dumps=partial(
@@ -76,3 +80,4 @@ EXTRA_HANDLERS = {
 }
 API.req_options.media_handlers.update(EXTRA_HANDLERS)
 API.resp_options.media_handlers.update(EXTRA_HANDLERS)
+print("Server Ready!")
