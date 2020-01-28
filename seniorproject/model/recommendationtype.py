@@ -9,3 +9,4 @@ class RecommendationType(str, Enum):
     SENTIMENT_REVERSAL = 'SentimentReversal'
     COMPARATIVE = 'Comparative'
     SUPERLATIVE = 'Superlative'
+    DIRECT_INDIRECT_CHECKING = 'DirectIndirectObjectChecking'
