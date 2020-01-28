@@ -216,5 +216,7 @@ $RECYCLE.BIN/
 # Ignore all local history of files
 .history
 
+### Intellij ###
+.idea
 
 # End of https://www.gitignore.io/api/git,macos,python,windows

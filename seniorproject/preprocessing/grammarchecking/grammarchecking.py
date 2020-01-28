@@ -15,10 +15,9 @@ def check_sentence_spell(sentence, stopwords):
 
 
 def check_sentence_grammar(sentence):
-    URL = 'http://grammar:8081/v2/check'
     whitelist_grammar = {'UPPERCASE_SENTENCE_START'}
     params = [('language', 'en'), ('text', sentence)]
-    response = requests.get(URL, params)
+    response = requests.get('http://grammar:8081/v2/check', params)
     response_json = response.json()
     matches = response_json['matches']
     if len(matches) == 1 and matches[0]['rule']['id'] in whitelist_grammar:
