@@ -29,6 +29,12 @@ services:
       - "8000:8000"
     depends_on:
       - db
+  grammar:
+    build:
+      dockerfile: Dockerfile
+      context: ./seniorproject/preprocessing/grammarchecking
+    ports:
+      - "8081:8081"
 
 secrets:
   db_name:
