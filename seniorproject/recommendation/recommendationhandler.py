@@ -10,6 +10,7 @@ from seniorproject.recommendation.simpletocompound.simpletocompound import \
     SimpleToCompound
 from seniorproject.recommendation.passivetoactive import passivetoactive
 from seniorproject.recommendation.sentimentreversal import sentimentreversal
+from seniorproject.recommendation.clauseanalysis import clauseanalysis
 
 
 class RecommendationHandler:
@@ -33,7 +34,8 @@ class RecommendationHandler:
             ),
             passivetoactive.PassiveAnalyzer(),
             sentimentreversal.SentimentReversal(),
-            comp_super.ComparativeSuperlativeAnalyzer()
+            comp_super.ComparativeSuperlativeAnalyzer(),
+            clauseanalysis.ClauseAnalysis()
         ]
 
     def collect_recommendations(self, doc: Document) -> List[Recommendation]:
