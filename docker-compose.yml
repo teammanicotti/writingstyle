@@ -1,8 +1,8 @@
-version: '3.1'
+version: "3.1"
 services:
   db:
-#    ports:
-#      - "3306:3306"
+    #    ports:
+    #      - "3306:3306"
     image: mysql:8.0.17
     volumes:
       - "./db_init:/docker-entrypoint-initdb.d"
@@ -25,6 +25,7 @@ services:
       - db_password
     links:
       - "db:database"
+      - "grammar"
     ports:
       - "8000:8000"
     depends_on:
