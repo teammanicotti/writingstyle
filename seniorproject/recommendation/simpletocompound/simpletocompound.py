@@ -1,5 +1,4 @@
 """Encapsulates the logic of determining sentence type and similarity."""
-import sys
 
 from typing import List
 from spacy.tokens import Span
@@ -66,7 +65,8 @@ class SimpleToCompound(RecommendationEngine):
                         sent.start_char,
                         sent.end_char,
                         doc.paragraphs.index(paragraph),
-                        sent_type, sent
+                        sent_type,
+                        sent
                     )
                 )
 
@@ -75,7 +75,10 @@ class SimpleToCompound(RecommendationEngine):
             if first.sentence_type is SentenceType.SIMPLE and \
                     second.sentence_type is SentenceType.SIMPLE:
                 similarity_scores = self.similarity_classifier \
-                    .determine_similarity([first.text, second.text])
+                    .determine_similarity([
+                        first.span._.text_without_citations,
+                        second.span._.text_without_citations
+                ])
                 results.append(Recommendation(
                     RecommendationType.SIMPLE_TO_COMPOUND,
                     f'{first.text} {second.text}',
@@ -100,7 +103,7 @@ class SimpleToCompound(RecommendationEngine):
         """
         is_compound = False
         is_complex = False
-        for token in sentence:
+        for token in sentence._.tokens_without_citations:
             if token.dep_ in SUBJ_TAGS and token.head.pos_ == 'VERB' and \
                     token.head.dep_ != 'ROOT':
                 if token.head.dep_ == 'conj':
