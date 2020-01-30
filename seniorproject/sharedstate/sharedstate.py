@@ -5,7 +5,7 @@ import tensorflow_hub as hub
 import sentencepiece as spm
 from spacy.language import Language
 
-from preprocessing import spacy_extensions
+from seniorproject.preprocessing import spacy_extensions
 
 
 def init_tf():
