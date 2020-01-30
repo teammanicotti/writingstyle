@@ -1,9 +1,13 @@
 """Entry into the API system."""
 import json
+import os
 from functools import partial
+from pathlib import Path
 
 import falcon
+import sentry_sdk
 from falcon import media
+from sentry_sdk.integrations.falcon import FalconIntegration
 
 from seniorproject.endpoint.analyze_resource import AnalyzeResource
 from seniorproject.preprocessing.documentparser import DocumentParser
@@ -17,29 +21,19 @@ __author__ = 'Devon Welcheck'
 
 # Retrieve the environment.
 if os.path.isdir('/run/secrets'):  # If running in Docker
-#     DB_NAME = open('/run/secrets/db_name').read()
-#     DB_USER = open('/run/secrets/db_user').read()
-#     DB_PASSWORD = open('/run/secrets/db_password').read()
-#     DB_URL = open('/run/secrets/db_url').read()
     if Path('/run/secrets/sentry').exists():
         sentry_sdk.init(
             dsn=open('/run/secrets/sentry').read(),
             integrations=[FalconIntegration()]
         )
 else:
-#     DB_NAME = open('.db_name').read()
-#     DB_URL = open('.db_url').read()
-#     DB_USER = open('.db_user').read()
-#     DB_PASSWORD = open('.db_password').read()
     if Path('.sentry_dsn').exists():
         sentry_sdk.init(
             dsn=open('.sentry_dsn').read(),
             integrations=[
                 FalconIntegration(),
-                SqlalchemyIntegration()
             ]
         )
-# DB_CONNECTOR = DBConnector(f'mysql+mysqldb://{DB_USER}:{DB_PASSWORD}@{DB_URL}/{DB_NAME}')
 
 RECOMMENDATION_HANDLER = RecommendationHandler(
     sharedstate.spacy_instance,
