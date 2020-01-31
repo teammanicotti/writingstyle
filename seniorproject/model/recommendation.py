@@ -25,8 +25,8 @@ class Recommendation:
             end_offset: int,
             paragraph_index: int,
             new_values: List[str],
+            hash_value: str,
             confidence: float = None,
-            hash_value: str = '',
     ):
         self.recommendation_type = recommendation_type
         self.original_text = original_text

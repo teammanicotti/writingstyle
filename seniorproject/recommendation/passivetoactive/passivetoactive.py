@@ -71,6 +71,7 @@ class PassiveAnalyzer(RecommendationEngine):
                     sentence.end,
                     paragraph_index,  # paragraph index
                     PassiveAnalyzer.create_new_sentence(sentence),
+                    '',  # TODO: Add hash value
                     0  # Confidence
                 ))
         return results
