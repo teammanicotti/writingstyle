@@ -30,6 +30,7 @@ class ClauseAnalysis(RecommendationEngine):
                             sent.end,
                             paragraph_index,
                             [result],
+                            '',  # TODO: Add hash value
                             1
                         )
                     )
