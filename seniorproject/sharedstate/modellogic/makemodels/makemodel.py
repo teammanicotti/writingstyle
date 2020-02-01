@@ -1,3 +1,12 @@
+"""
+This python script is used to make and pickle a model using sklearn with
+spaCy processing. This script is intended to be run only as a stand-alone
+single-execution script.
+
+No packages in this module should be used elsewhere in the project.
+(Hence the missing `__init__.py` file).
+"""
+
 import os
 
 from sklearn.feature_extraction.text import CountVectorizer
@@ -8,7 +17,7 @@ import pickle
 from sklearn import metrics
 
 # Modify this to change the output file
-OUT_MODEL_NAME = "gyafc_model_1.mdl"
+OUT_MODEL_NAME = "gyafc_model_1.mdl"  # Will be output to the root dir of the project
 TRAINING_FILE_NAME = os.sep.join(["makemodels", "data", "gyafc.csv"])
 
 # Model Logic Module

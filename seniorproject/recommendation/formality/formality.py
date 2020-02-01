@@ -1,8 +1,8 @@
 """
-Comparative and Superlative:
+Formality:
 
-Contains a method to annotate a sentence with improvements to
-comparative and superlative usage
+Annotates each sentence with a recommendation if the Sklearn models produce
+a positive result when detecting informality.
 """
 from typing import List
 
@@ -27,7 +27,7 @@ def annotate_sentence(sentence, index):
                             sentence.end,
                             index,  # paragraph index
                             [],
-                            1  # Confidence TODO can we predict this with the model?
+                            .25  # Confidence
                         )
         ]
     return []
