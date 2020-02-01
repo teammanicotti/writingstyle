@@ -1,3 +1,11 @@
+"""
+The Formality Model Logic
+
+Contains information on how the pipeline should process a token and how it
+should classify it
+"""
+
+
 import pickle
 import string
 import pandas as pd
@@ -8,7 +16,7 @@ from spacy.lang.en import English
 from spacy.lang.en.stop_words import STOP_WORDS
 import en_core_web_sm
 
-
+# Constants
 N_GRAM_RANGE = 2
 USES_PUNCTUATION = True
 USES_STOP_WORDS = True

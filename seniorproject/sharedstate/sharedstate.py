@@ -58,11 +58,11 @@ spacy_instance.add_pipe(spacy_extensions.retokenize_citations, before='parser')
 tf_session, tf_encodings, tf_input_placeholder, tf_sentence_piece_processor = \
     init_tf()
 
+# Load the formality models into shared state
+# This will load all models in the `active_models` directory under the formality feature
 formality_models_fps = []
-for subdir, dirs, files in os.walk("seniorproject/recommendation/formality/active_models"):
+for subdir, dirs, files in os.walk(os.sep.join(["seniorproject", "recommendation", "formality", "active_models"])):
     formality_models_fps += list(map(lambda file: subdir + os.sep + file, files))
-
-print(formality_models_fps)
 
 formality_model = EnsemblePipeline(
     list(
