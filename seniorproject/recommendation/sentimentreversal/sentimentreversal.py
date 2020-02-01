@@ -58,7 +58,7 @@ class SentimentReversal(RecommendationEngine):
                         word.i + 1,  # edge end index
                         paragraph_index,  # paragraph index
                         ants,
-                        '',  # TODO: Add hash value
+                        str(hash(sentence.text + RecommendationType.SENTIMENT_REVERSAL)),
                         0  # Confidence
                     ))
         return results
