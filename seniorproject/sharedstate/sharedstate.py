@@ -5,6 +5,8 @@ import tensorflow_hub as hub
 import sentencepiece as spm
 from spacy.language import Language
 
+from seniorproject.preprocessing import spacy_extensions
+
 
 def init_tf():
     """Load in Universal Sentence Encoder and SentencePiece modules.
@@ -17,7 +19,7 @@ def init_tf():
             shape=[None, None]
         )
         module = hub.Module(
-            "https://tfhub.dev/google/universal-sentence-encoder-lite/2"
+            'https://tfhub.dev/google/universal-sentence-encoder-lite/2'
         )
         init_op = tf.group(
             [
@@ -34,7 +36,7 @@ def init_tf():
         )
 
         session = tf.compat.v1.Session(graph=graph)
-        spm_path = session.run(module(signature="spm_path"))
+        spm_path = session.run(module(signature='spm_path'))
         graph.finalize()
         session.run(init_op)
         sentence_piece_processor = spm.SentencePieceProcessor()
@@ -47,5 +49,8 @@ def init_tf():
 
 
 spacy_instance: Language = en_core_web_lg.load()
+spacy_extensions.enable_spacy_extensions()
+spacy_instance.add_pipe(spacy_extensions.retokenize_citations, before='parser')
+
 tf_session, tf_encodings, tf_input_placeholder, tf_sentence_piece_processor = \
     init_tf()
