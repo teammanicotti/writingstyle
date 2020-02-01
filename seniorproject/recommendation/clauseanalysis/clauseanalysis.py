@@ -14,25 +14,27 @@ class ClauseAnalysis(RecommendationEngine):
     def __init__(self):
         super(ClauseAnalysis, self).__init__()
 
+    # noinspection PyProtectedMember
     def analyze(self, doc: Document) -> List[Recommendation]:
         results = []
         paragraph_index = 0
 
         for paragraph in doc.paragraphs:
             for sent in paragraph.spacy_doc.sents:
-                result = ClauseAnalysis.check_sentence_direct_and_indirect_obj(sent)
-                if result is not None:
-                    results.append(
-                        Recommendation(
-                            RecommendationType.DIRECT_INDIRECT_CHECKING,
-                            sent.text,
-                            sent.start,
-                            sent.end,
-                            paragraph_index,
-                            [result],
-                            1
+                if not sent._.has_grammar_errors:
+                    result = ClauseAnalysis.check_sentence_direct_and_indirect_obj(sent)
+                    if result is not None:
+                        results.append(
+                            Recommendation(
+                                RecommendationType.DIRECT_INDIRECT_CHECKING,
+                                sent.text,
+                                sent.start,
+                                sent.end,
+                                paragraph_index,
+                                [result],
+                                1
+                            )
                         )
-                    )
             paragraph_index += 1
 
         return results

@@ -43,7 +43,7 @@ class GrammarChecking:
         :return: boolean
         """
         params = [('language', 'en'), ('text', sentence)]
-        response = requests.get('http://localhost:8081/v2/check', params)
+        response = requests.get('http://grammar:8081/v2/check', params)
         response_json = response.json()
         matches = response_json['matches']
         recommendation = []
