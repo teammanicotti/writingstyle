@@ -89,6 +89,7 @@ class SimpleToCompound(RecommendationEngine):
                         first.span,
                         second.span
                     ),
+                    f'{first.text} {second.text}',
                     similarity_scores.min().item()  # pylint: disable=no-member
                 ))
         return results

@@ -34,7 +34,10 @@ def annotate_sentence(sentence, index):
                             sentence.start,
                             sentence.end,
                             index,  # paragraph index
-                            sentence.text.replace("more " + head.text, new_comparative),
+                            sentence.text.replace(
+                                "more " + head.text, new_comparative
+                            ),
+                            '',  # TODO: Add hash value
                             1  # Confidence
                         )
                     )
@@ -51,7 +54,10 @@ def annotate_sentence(sentence, index):
                             sentence.start,
                             sentence.end,
                             index,  # paragraph index
-                            sentence.text.replace("most " + head.text, new_superlative),
+                            sentence.text.replace(
+                                "most " + head.text, new_superlative
+                            ),
+                            '',  # TODO: Add hash value
                             1  # Confidence
                         )
                     )

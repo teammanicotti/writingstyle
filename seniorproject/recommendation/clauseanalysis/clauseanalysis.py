@@ -30,6 +30,7 @@ class ClauseAnalysis(RecommendationEngine):
                             sent.end,
                             paragraph_index,
                             [result],
+                            f'{sent.text}{result}{RecommendationType.DIRECT_INDIRECT_CHECKING}',
                             1
                         )
                     )
@@ -39,6 +40,11 @@ class ClauseAnalysis(RecommendationEngine):
 
     @staticmethod
     def check_sentence_direct_and_indirect_obj(sentence):
+        """
+        Rewrite the sentence if the direct object comes before indirect object
+        :param sentence:
+        :return: str
+        """
         for token in sentence:
             if token.pos_ == "VERB" and token.dep_ == 'ROOT':
                 token_index = token.i - sentence.start
