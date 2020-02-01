@@ -3,12 +3,14 @@ from typing import List
 
 from seniorproject.model.document import Document
 from seniorproject.model.recommendation import Recommendation
+from seniorproject.recommendation.comperativesuperlative import comp_super
 from seniorproject.recommendation.recommendationengine import \
     RecommendationEngine
 from seniorproject.recommendation.simpletocompound.simpletocompound import \
     SimpleToCompound
 from seniorproject.recommendation.passivetoactive import passivetoactive
 from seniorproject.recommendation.sentimentreversal import sentimentreversal
+from seniorproject.recommendation.clauseanalysis import clauseanalysis
 
 
 class RecommendationHandler:
@@ -31,7 +33,9 @@ class RecommendationHandler:
                 tf_sentence_piece_processor
             ),
             passivetoactive.PassiveAnalyzer(),
-            sentimentreversal.SentimentReversal()
+            sentimentreversal.SentimentReversal(),
+            comp_super.ComparativeSuperlativeAnalyzer(),
+            clauseanalysis.ClauseAnalysis()
         ]
 
     def collect_recommendations(self, doc: Document) -> List[Recommendation]:
