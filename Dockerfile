@@ -13,6 +13,7 @@ COPY seniorproject/recommendation/passivetoactive/requirements.txt seniorproject
 COPY seniorproject/recommendation/sentimentreversal/requirements.txt seniorproject/recommendation/sentimentreversal/requirements.txt
 
 # Install deps and spaCy model
+RUN apt-get -qq update; apt-get install -y -qq libmysqlclient-dev libssl-dev gcc > /dev/null
 RUN python -m pip install -r seniorproject/requirements.txt --default-timeout=600 > /dev/null
 
 COPY . /seniorproject
