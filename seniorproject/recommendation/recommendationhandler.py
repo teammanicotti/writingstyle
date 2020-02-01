@@ -4,6 +4,7 @@ from typing import List
 from seniorproject.model.document import Document
 from seniorproject.model.recommendation import Recommendation
 from seniorproject.recommendation.comperativesuperlative import comp_super
+from seniorproject.recommendation.formality import formality
 from seniorproject.recommendation.recommendationengine import \
     RecommendationEngine
 from seniorproject.recommendation.simpletocompound.simpletocompound import \
@@ -35,7 +36,8 @@ class RecommendationHandler:
             passivetoactive.PassiveAnalyzer(),
             sentimentreversal.SentimentReversal(),
             comp_super.ComparativeSuperlativeAnalyzer(),
-            clauseanalysis.ClauseAnalysis()
+            clauseanalysis.ClauseAnalysis(),
+            formality.FormalityAnalyzer()
         ]
 
     def collect_recommendations(self, doc: Document) -> List[Recommendation]:

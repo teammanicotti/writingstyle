@@ -1,4 +1,6 @@
 """Contains state shared between WSGI forks"""
+import os
+
 import en_core_web_lg
 import tensorflow as tf
 import tensorflow_hub as hub
@@ -6,7 +8,8 @@ import sentencepiece as spm
 from spacy.language import Language
 
 from seniorproject.preprocessing import spacy_extensions
-
+from seniorproject.sharedstate.ensemble_pipeline import EnsemblePipeline
+from seniorproject.sharedstate.modellogic.formality import load_model
 
 def init_tf():
     """Load in Universal Sentence Encoder and SentencePiece modules.
@@ -54,3 +57,19 @@ spacy_instance.add_pipe(spacy_extensions.retokenize_citations, before='parser')
 
 tf_session, tf_encodings, tf_input_placeholder, tf_sentence_piece_processor = \
     init_tf()
+
+formality_models_fps = []
+for subdir, dirs, files in os.walk("seniorproject/recommendation/formality/active_models"):
+    formality_models_fps += list(map(lambda file: subdir + os.sep + file, files))
+
+print(formality_models_fps)
+
+formality_model = EnsemblePipeline(
+    list(
+        map(
+            lambda model_file:
+                load_model(model_file),
+            formality_models_fps
+        )
+    )
+)
