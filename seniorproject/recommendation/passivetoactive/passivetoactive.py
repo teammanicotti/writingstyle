@@ -17,7 +17,6 @@ from seniorproject.model.recommendation import Recommendation
 from seniorproject.model.document import Document
 from typing import List
 
-sentry_sdk.init("https://b1a5322b89894d68805560c7759c0b99@sentry.io/1804379")
 
 class PassiveAnalyzer(RecommendationEngine):
 
@@ -72,6 +71,7 @@ class PassiveAnalyzer(RecommendationEngine):
                     sentence.end,
                     paragraph_index,  # paragraph index
                     PassiveAnalyzer.create_new_sentence(sentence),
+                    str(hash(sentence.text + RecommendationType.PASSIVE_TO_ACTIVE)),
                     0  # Confidence
                 ))
         return results
