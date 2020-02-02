@@ -1,43 +1,10 @@
 version: '3.1'
 services:
-  db:
-#    ports:
-#      - "3306:3306"
-    image: mysql:8.0.17
-    volumes:
-      - "./db_init:/docker-entrypoint-initdb.d"
-    secrets:
-      - db_name
-      - db_url
-      - db_user
-      - db_password
-      - db_root_password
-    environment:
-      MYSQL_DATABASE_FILE: /run/secrets/db_name
-      MYSQL_USER_FILE: /run/secrets/db_user
-      MYSQL_PASSWORD_FILE: /run/secrets/db_password
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
   web:
     secrets:
       - db_name
       - db_url
       - db_user
       - db_password
-    links:
-      - "db:database"
     ports:
       - "8000:8000"
-    depends_on:
-      - db
-
-secrets:
-  db_name:
-    file: ./.db_name
-  db_url:
-    file: ./.db_url
-  db_user:
-    file: ./.db_user
-  db_password:
-    file: ./.db_password
-  db_root_password:
-    file: ./.db_root_password
