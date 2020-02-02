@@ -1,3 +1,4 @@
+# TensorFlow 2.0.0 image with Python 3.6.8
 FROM tensorflow/tensorflow:2.0.0-py3
 #FROM python:3.6.9-slim
 
