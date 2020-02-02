@@ -37,7 +37,7 @@ def annotate_sentence(sentence, index):
                             sentence.text.replace(
                                 "more " + head.text, new_comparative
                             ),
-                            '',  # TODO: Add hash value
+                            str((RecommendationType.COMPARATIVE + head.text).__hash__()),
                             1  # Confidence
                         )
                     )
@@ -57,7 +57,7 @@ def annotate_sentence(sentence, index):
                             sentence.text.replace(
                                 "most " + head.text, new_superlative
                             ),
-                            '',  # TODO: Add hash value
+                            str((RecommendationType.SUPERLATIVE + head.text).__hash__()),
                             1  # Confidence
                         )
                     )
