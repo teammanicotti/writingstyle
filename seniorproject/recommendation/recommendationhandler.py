@@ -4,7 +4,6 @@ from typing import List
 from seniorproject.model.document import Document
 from seniorproject.model.recommendation import Recommendation
 from seniorproject.recommendation.comperativesuperlative import comp_super
-from seniorproject.recommendation.formality import formality
 from seniorproject.recommendation.recommendationengine import \
     RecommendationEngine
 from seniorproject.recommendation.simpletocompound.simpletocompound import \
