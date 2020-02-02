@@ -71,7 +71,7 @@ class PassiveAnalyzer(RecommendationEngine):
                     sentence.end,
                     paragraph_index,  # paragraph index
                     PassiveAnalyzer.create_new_sentence(sentence),
-                    str(hash(sentence.text + RecommendationType.PASSIVE_TO_ACTIVE)),
+                    sentence.text + RecommendationType.PASSIVE_TO_ACTIVE,
                     0  # Confidence
                 ))
         return results
