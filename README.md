@@ -10,8 +10,6 @@ The moment you've all been waiting for...is here!
   - pytest (development only)
   - pylint (development only)
   - sentry-sdk[falcon]==0.13.1
-  - python-dotenv
-  - SQLAlchemy
 
 _or_
 * Docker
@@ -21,21 +19,11 @@ _or_
 [![pipeline status](https://gitlab.com/seniorprojectntid/seniorproject/badges/develop/pipeline.svg)](https://gitlab.com/seniorprojectntid/seniorproject/commits/develop)
 
 ## How to Run
-### Creating Database
-Creating the database for local development can be done by importing the SQL
-files located in the `db_init` folder into your MySQL instance.  Setting up
-a MySQL instance is out of scope for this README, but is set up automatically
-if running via Docker. 
 
 ### Creating Environment Files
 For any of the below methods, environment files need to be created to tell the
-application where to access the database and other resources.  The following
+application how to access Sentry, if desired.  The following
 environment files are needed:
-* `.db_name`
-* `.db_url` (if using docker, simply put the value `database` in this file)
-* `.db_user`
-* `.db_password`
-* `.db_root_password` (if running in Docker)
 * `.sentry_dsn` (optional, for logging errors in Sentry)
 
 These files do not follow the `envfile` convention, they instead
