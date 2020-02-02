@@ -27,6 +27,7 @@ def annotate_sentence(sentence, index):
                             sentence.end,
                             index,  # paragraph index
                             [],
+                            str((RecommendationType.FORMALITY + sentence.text).__hash__()),
                             .25  # Confidence
                         )
         ]
