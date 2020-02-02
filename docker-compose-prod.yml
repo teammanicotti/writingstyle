@@ -6,6 +6,6 @@ services:
       - sentry
 
 secrets:
-  sentry_url:
+  sentry:
     file: ./.sentry_dsn
 
