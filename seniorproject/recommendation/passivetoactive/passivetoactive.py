@@ -4,18 +4,21 @@ and generate new sentences in the active voice
 Author: Robert Liedka (rl5849)
 """
 import re
+from typing import List
+
 import sentry_sdk
 from sentry_sdk import capture_exception
+from pattern.en import conjugate, PRESENT, PAST, PL, SG, INFINITIVE, \
+    PARTICIPLE  # Yes, these always have red sqiggles under them
+
 from seniorproject.recommendation.passivetoactive.SentenceTools import \
     SentenceTools
 from seniorproject.recommendation.recommendationengine import \
     RecommendationEngine
-from pattern.en import conjugate, PRESENT, PAST, PL, SG, INFINITIVE, \
-    PARTICIPLE  # Yes, these always have red sqiggles under them
 from seniorproject.model.recommendationtype import RecommendationType
 from seniorproject.model.recommendation import Recommendation
 from seniorproject.model.document import Document
-from typing import List
+
 
 
 class PassiveAnalyzer(RecommendationEngine):
