@@ -2,17 +2,18 @@ import en_core_web_lg
 import pytest
 
 from seniorproject.preprocessing import spacy_extensions
+from tests.util.nlp import nlp
 
 
-@pytest.fixture(scope='module')
-def nlp():
-    spacy_instance = en_core_web_lg.load()
-    spacy_extensions.enable_spacy_extensions()
-    spacy_instance.add_pipe(
-        spacy_extensions.retokenize_citations,
-        before='parser'
-    )
-    return spacy_instance
+# @pytest.fixture(scope='session')
+# def nlp():
+#     spacy_instance = en_core_web_lg.load()
+#     spacy_extensions.enable_spacy_extensions()
+#     spacy_instance.add_pipe(
+#         spacy_extensions.retokenize_citations,
+#         before='parser'
+#     )
+#     return spacy_instance
 
 
 def test_et_al_author_nd_pp(nlp):

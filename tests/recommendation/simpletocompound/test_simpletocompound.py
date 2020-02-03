@@ -1,37 +1,77 @@
 import en_core_web_lg
 import pytest
 from spacy.language import Language
+import tensorflow as tf
+import tensorflow_hub as hub
+import sentencepiece as spm
 
+from preprocessing import spacy_extensions
 from seniorproject.recommendation.simpletocompound.model.sentencetype import \
     SentenceType
 from seniorproject.recommendation.simpletocompound.simpletocompound import \
     SimpleToCompound
-
+# from sharedstate.sharedstate import init_tf
 
 from tests.util.model import *
+from tests.util.nlp import nlp
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def simple_compound():
     spacy_instance = MagicMock(spec=Language)
-    tf_session = MagicMock()
-    tf_encodings = MagicMock()
-    tf_input_placeholder = MagicMock()
-    tf_sentence_piece_processor = MagicMock()
+    # tf_session, tf_encodings, tf_input_placeholder, tf_sentence_piece_processor\
+    #     = init_tf()
+
+    graph = tf.compat.v1.Graph()
+    with graph.as_default():  # pylint: disable=not-context-manager
+        input_placeholder = tf.compat.v1.sparse_placeholder(
+            tf.int64,
+            shape=[None, None]
+        )
+        module = hub.Module(
+            'https://tfhub.dev/google/universal-sentence-encoder-lite/2'
+        )
+        init_op = tf.group(
+            [
+                tf.compat.v1.global_variables_initializer(),
+                tf.compat.v1.tables_initializer()
+            ]
+        )
+        encodings = module(
+            inputs=dict(
+                values=input_placeholder.values,
+                indices=input_placeholder.indices,
+                dense_shape=input_placeholder.dense_shape
+            )
+        )
+
+        session = tf.compat.v1.Session(graph=graph)
+        spm_path = session.run(module(signature='spm_path'))
+        graph.finalize()
+        session.run(init_op)
+        sentence_piece_processor = spm.SentencePieceProcessor()
+        sentence_piece_processor.Load(spm_path)
+
+    # Reduce logging output.
+    tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
     simple_compound = SimpleToCompound(
         spacy_instance,
-        tf_session,
-        tf_encodings,
-        tf_input_placeholder,
-        tf_sentence_piece_processor
+        session,
+        encodings,
+        input_placeholder,
+        sentence_piece_processor
     )
     return simple_compound
 
 
-@pytest.fixture
-def spacy_instance():
-    return en_core_web_lg.load()
+# @pytest.fixture(scope='session')
+# def spacy_instance():
+#     spacy_instance = en_core_web_lg.load()
+#     spacy_extensions.enable_spacy_extensions()
+#     spacy_instance.add_pipe(spacy_extensions.retokenize_citations,
+#                             before='parser')
+#     return spacy_instance
 
 
 @pytest.fixture
@@ -41,6 +81,7 @@ def single_sentence_paragraph():
     sentence1 = spacy_span_mock(
         'Mark went to the store.'
     )
+    sentence1._.text_without_citations = text
     spacy_doc = spacy_doc_mock(
         [sentence1]
     )
@@ -100,7 +141,10 @@ def test_analyze_simple_sentences(
     simple_compound.sentence_type = MagicMock(
         side_effect=lambda _: SentenceType.SIMPLE)
 
-    assert simple_compound.analyze(simple_sentences)[0].new_values == [
+    assert simple_compound.analyze(
+        simple_sentences,
+        similarity_threshold=0.1
+    )[0].new_values == [
         'Mark went to the store, for his mom did not have food for dinner.',
         'Mark went to the store, and his mom did not have food for dinner.',
         'Mark went to the store, but his mom did not have food for dinner.',
@@ -123,32 +167,36 @@ def test_analyze_simple_and_compound_sentence(
 
     simple_compound.sentence_type = MagicMock(side_effect=sent_type)
 
-    assert simple_compound.analyze(simple_and_compound) == []
+    assert simple_compound.analyze(
+        simple_and_compound,
+        similarity_threshold=0.1
+    ) == []
 
 
 def test_sentence_type_simple(
         simple_compound,
-        spacy_instance
+        nlp
 ):
-    document = spacy_instance('I like tea.')
+    document = nlp('I like tea.')
     assert simple_compound.sentence_type(list(document.sents)[0]) == \
        SentenceType.SIMPLE
 
 
 def test_sentence_type_compound(
         simple_compound,
-        spacy_instance
+        nlp
 ):
-    document = spacy_instance('I like tea, and he likes coffee.')
+    document = nlp('I like tea, and he likes coffee.')
+    document.paragraphs
     assert simple_compound.sentence_type(list(document.sents)[0]) == \
        SentenceType.COMPOUND
 
 
 def test_sentence_type_complex(
         simple_compound,
-        spacy_instance
+        nlp
 ):
-    document = spacy_instance(
+    document = nlp(
         'When the kettle begins to whistle, you must take it off the stove.'
     )
     assert simple_compound.sentence_type(list(document.sents)[0]) == \
@@ -157,9 +205,9 @@ def test_sentence_type_complex(
 
 def test_sentence_type_complex_compound(
         simple_compound,
-        spacy_instance
+        nlp
 ):
-    document = spacy_instance(
+    document = nlp(
         'Erin loves her brother, and he loves her too because she '
         'pays his bills.'
     )

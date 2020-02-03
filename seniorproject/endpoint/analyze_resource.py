@@ -24,6 +24,13 @@ class AnalyzeResource:
         :param resp: Falcon response object
         :return: None
         """
-        doc = self.document_parser.parse_document(req.media['text'], req.media['paragraphs'])
-        recs = self.recommendation_handler.collect_recommendations(doc)
+        doc = self.document_parser.parse_document(
+            req.media['text'],
+            req.media['paragraphs']
+        )
+        similarity_threshold = req.media['similarityThreshold']
+        recs = self.recommendation_handler.collect_recommendations(
+            doc,
+            similarity_threshold
+        )
         resp.media = {'results': recs}

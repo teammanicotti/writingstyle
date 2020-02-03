@@ -41,7 +41,7 @@ class SimpleToCompound(RecommendationEngine):
                 tf_sentence_piece_processor
             )
 
-    def analyze(self, doc: Document) -> List[Recommendation]:
+    def analyze(self, doc: Document, **kwargs) -> List[Recommendation]:
         """Determines the sentence type and similarity of sentence pairs
 
         Analyzes the provides text using spaCy.  Then, the sentences are
@@ -79,19 +79,22 @@ class SimpleToCompound(RecommendationEngine):
                         first.span._.text_without_citations,
                         second.span._.text_without_citations
                 ])
-                results.append(Recommendation(
-                    RecommendationType.SIMPLE_TO_COMPOUND,
-                    f'{first.text} {second.text}',
-                    first.start_position,
-                    second.end_position,
-                    first.paragraph_idx,
-                    Combine.generate_combined(
-                        first.span,
-                        second.span
-                    ),
-                    f'{first.text} {second.text}',
-                    similarity_scores.min().item()  # pylint: disable=no-member
-                ))
+                similarity_score = similarity_scores.min().item()  # pylint: disable=no-member,line-too-long
+
+                if similarity_score >= kwargs.get('similarity_threshold'):
+                    results.append(Recommendation(
+                        RecommendationType.SIMPLE_TO_COMPOUND,
+                        f'{first.text} {second.text}',
+                        first.start_position,
+                        second.end_position,
+                        first.paragraph_idx,
+                        Combine.generate_combined(
+                            first.span,
+                            second.span
+                        ),
+                        f'{first.text} {second.text}',
+
+                    ))
         return results
 
     @staticmethod

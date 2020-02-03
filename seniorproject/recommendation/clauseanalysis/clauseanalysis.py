@@ -14,7 +14,7 @@ class ClauseAnalysis(RecommendationEngine):
     def __init__(self):
         super(ClauseAnalysis, self).__init__()
 
-    def analyze(self, doc: Document) -> List[Recommendation]:
+    def analyze(self, doc: Document, **kwargs) -> List[Recommendation]:
         results = []
         paragraph_index = 0
 

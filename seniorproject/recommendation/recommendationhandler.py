@@ -38,13 +38,22 @@ class RecommendationHandler:
             clauseanalysis.ClauseAnalysis()
         ]
 
-    def collect_recommendations(self, doc: Document) -> List[Recommendation]:
+    def collect_recommendations(
+            self,
+            doc: Document,
+            similarity_threshold: float
+    ) -> List[Recommendation]:
         """Requests recommendations from each engine and combines them.
         :param doc Document to be analyzed
+        :param similarity_threshold threshold of whether to keep
+        simple-to-complex recommendation
         :return List[Recommendation] combined list of recommendations
         """
         recommendations = []
         for engine in self.recommendation_engines:
-            recommendations += engine.analyze(doc=doc)
+            recommendations += engine.analyze(
+                doc=doc,
+                similarity_threshold=similarity_threshold
+            )
 
         return recommendations
