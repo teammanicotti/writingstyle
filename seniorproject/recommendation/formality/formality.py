@@ -21,15 +21,15 @@ def annotate_sentence(sentence, index):
         # Sentence is informal
         return [
             Recommendation(
-                            RecommendationType.FORMALITY,
-                            sentence.text,
-                            sentence.start,
-                            sentence.end,
-                            index,  # paragraph index
-                            [],
-                            str((RecommendationType.FORMALITY + sentence.text).__hash__()),
-                            .25  # Confidence
-                        )
+                RecommendationType.FORMALITY,
+                sentence.text,
+                sentence.start,
+                sentence.end,
+                index,  # paragraph index
+                [],
+                RecommendationType.FORMALITY + sentence.text,
+                .25  # Confidence
+            )
         ]
     return []
 
