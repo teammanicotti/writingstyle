@@ -11,6 +11,7 @@ from seniorproject.recommendation.simpletocompound.simpletocompound import \
 from seniorproject.recommendation.passivetoactive import passivetoactive
 from seniorproject.recommendation.sentimentreversal import sentimentreversal
 from seniorproject.recommendation.clauseanalysis import clauseanalysis
+from seniorproject.recommendation.formality import formality
 
 
 class RecommendationHandler:
