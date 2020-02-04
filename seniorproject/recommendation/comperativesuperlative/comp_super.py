@@ -34,9 +34,9 @@ def annotate_sentence(sentence, index):
                             sentence.start,
                             sentence.end,
                             index,  # paragraph index
-                            sentence.text.replace(
+                            [sentence.text.replace(
                                 "more " + head.text, new_comparative
-                            ),
+                            )],
                             RecommendationType.COMPARATIVE + head.text,
                             1  # Confidence
                         )
@@ -54,9 +54,9 @@ def annotate_sentence(sentence, index):
                             sentence.start,
                             sentence.end,
                             index,  # paragraph index
-                            sentence.text.replace(
+                            [sentence.text.replace(
                                 "most " + head.text, new_superlative
-                            ),
+                            )],
                             RecommendationType.SUPERLATIVE + head.text,
                             1  # Confidence
                         )

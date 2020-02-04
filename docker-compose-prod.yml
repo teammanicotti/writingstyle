@@ -3,9 +3,9 @@ services:
   web:
     image: registry.gitlab.com/seniorprojectntid/seniorprojectntid:develop
     secrets:
-      - sentry_url
+      - sentry
 
 secrets:
-  sentry_url:
+  sentry:
     file: ./.sentry_dsn
 

@@ -221,4 +221,5 @@ $RECYCLE.BIN/
 # Pycharm
 .idea
 spaCy
+.pycharmrc
 
