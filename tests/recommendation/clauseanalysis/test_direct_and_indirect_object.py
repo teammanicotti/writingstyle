@@ -13,6 +13,13 @@ def sentence_to_mock_doc(text, mock_tokens=None):
     return document_mock(text, [paragraph])
 
 
+def test_check_sentence_direct_and_indirect_obj_rewrite_with_citation():
+    text = 'I kicked the ball to her mom (n.d., ppg. 34).'
+    doc = nlp(text)
+    assert ClauseAnalysis.check_sentence_direct_and_indirect_obj(next(doc.sents)) == 'I kicked her mom ' \
+                                                                                     'the ball (n.d., ppg. 34).'
+
+
 def test_check_sentence_direct_and_indirect_obj_rewrite():
     text = 'I kicked the ball to her.'
     doc = nlp(text)
