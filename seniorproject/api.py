@@ -9,6 +9,7 @@ import sentry_sdk
 from falcon import media
 from sentry_sdk.integrations.falcon import FalconIntegration
 
+from endpoint.analytics_resource import AnalyticsResource
 from seniorproject.endpoint.analyze_resource import AnalyzeResource
 from seniorproject.preprocessing.documentparser import DocumentParser
 from seniorproject.recommendation.recommendationhandler import \
@@ -51,6 +52,7 @@ API.add_route('/analyze', AnalyzeResource(
     DOCUMENT_PARSER,
     RECOMMENDATION_HANDLER,
 ))
+API.add_route('/analytics', AnalyticsResource())
 
 JSON_HANDLER = media.JSONHandler(
     dumps=partial(
