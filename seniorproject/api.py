@@ -40,9 +40,9 @@ else:
         )
 
 # Set up logging.
-logfile_path = os.environ['LOGFILE_PATH'] or 'seniorproject.log'
-log_level = os.environ['LOG_LEVEL'] or 'INFO'
-logging.basicConfig(filename=logfile_path, log_level=log_level)
+if not os.path.isdir('logs'):
+    os.mkdir('logs')
+logging.basicConfig(filename='logs/seniorproject.log', level=logging.INFO)
 
 RECOMMENDATION_HANDLER = RecommendationHandler(
     sharedstate.spacy_instance,
