@@ -1,5 +1,6 @@
 """Entry into the API system."""
 import json
+import logging
 import os
 from functools import partial
 from pathlib import Path
@@ -20,7 +21,10 @@ from seniorproject.util.recommendationjsonencoder import \
 __author__ = 'Devon Welcheck'
 
 # Retrieve the environment.
-if os.path.isdir('/run/secrets'):  # If running in Docker
+in_docker: bool = os.path.isdir(os.path.isdir('/run/secrets'))
+
+# Set up sentry.
+if in_docker:
     if Path('/run/secrets/sentry').exists():
         sentry_sdk.init(
             dsn=open('/run/secrets/sentry').read(),
@@ -34,6 +38,11 @@ else:
                 FalconIntegration(),
             ]
         )
+
+# Set up logging.
+logfile_path = os.environ['LOGFILE_PATH'] or 'seniorproject.log'
+log_level = os.environ['LOG_LEVEL'] or 'INFO'
+logging.basicConfig(filename=logfile_path, log_level=log_level)
 
 RECOMMENDATION_HANDLER = RecommendationHandler(
     sharedstate.spacy_instance,
