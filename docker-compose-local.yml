@@ -2,3 +2,7 @@ version: '3.1'
 services:
   web:
     build: .
+  volumes:
+    - type: bind
+      source: ./logs
+      target: /seniorproject/logs

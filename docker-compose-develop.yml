@@ -4,6 +4,10 @@ services:
     image: registry.gitlab.com/seniorprojectntid/seniorproject:develop
     secrets:
       - sentry
+    volumes:
+      - type: bind
+        source: ./logs
+        target: /seniorproject/logs
 
 secrets:
   sentry:
