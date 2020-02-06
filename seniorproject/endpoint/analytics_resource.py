@@ -1,15 +1,9 @@
 """API entrypoint for '/analyze'"""
-
-
-
-
+import logging
 
 
 class AnalyticsResource:
     """API entrypoint for '/analyze'"""
-
-    def __init__(self):
-        pass
 
     def on_post(self, req, resp) -> None:
         """
@@ -18,4 +12,5 @@ class AnalyticsResource:
         :param resp: Falcon response object
         :return: None
         """
-        pass
+        logging.info(req.media)
+        resp.media = {'result': 'success'}
