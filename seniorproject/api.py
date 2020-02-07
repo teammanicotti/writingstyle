@@ -1,6 +1,5 @@
 """Entry into the API system."""
 import json
-import logging
 import os
 from functools import partial
 from pathlib import Path
@@ -39,11 +38,6 @@ else:
                 FalconIntegration(),
             ]
         )
-
-# Set up logging.
-if not os.path.isdir('logs'):
-    os.mkdir('logs')
-logging.basicConfig(filename='logs/seniorproject.log', level=logging.INFO)
 
 RECOMMENDATION_HANDLER = RecommendationHandler(
     sharedstate.spacy_instance,
