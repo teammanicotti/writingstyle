@@ -1,8 +1,11 @@
+from seniorproject.preprocessing import spacy_extensions
 from seniorproject.recommendation.clauseanalysis.clauseanalysis import ClauseAnalysis
 from tests.util.model import spacy_span_mock, spacy_doc_mock, paragraph_mock, document_mock, spacy_token_mock
 import spacy
 
 nlp = spacy.load('en_core_web_lg')
+spacy_extensions.enable_spacy_extensions()
+nlp.add_pipe(spacy_extensions.retokenize_citations, before='parser')
 clause_analysis = ClauseAnalysis()
 
 
