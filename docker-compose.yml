@@ -1,13 +1,7 @@
 version: "3.1"
 services:
   web:
-    links:
-      - "grammar"
     ports:
       - "8000:8000"
   grammar:
-    build:
-      dockerfile: Dockerfile
-      context: ./seniorproject/preprocessing/grammarchecking
-    ports:
-      - "8081:8081"
+
