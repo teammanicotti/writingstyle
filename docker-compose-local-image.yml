@@ -3,6 +3,6 @@ services:
   web:
     image: registry.gitlab.com/seniorprojectntid/seniorproject:develop
   grammar:
-    image: registry.gitlab.com/seniorprojectntid/seniorproject-grammar:develop
+    image: registry.gitlab.com/seniorprojectntid/seniorproject/grammar:develop
     ports:
       - "8081:8081"

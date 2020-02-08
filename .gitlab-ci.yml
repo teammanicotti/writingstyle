@@ -47,10 +47,8 @@ Build_seniorproject:
       --build-arg VCS_URL=$CI_PROJECT_URL
       --cache-from $CI_REGISTRY_IMAGE:latest
       --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-      --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
       .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
   tags:
     - dikdik
 
@@ -58,7 +56,7 @@ Build_seniorproject_grammar:
   stage: build
   script:
     # fetches the latest image (not failing if image is not found)
-    - docker pull $CI_REGISTRY_IMAGE-grammar:latest || true
+    - docker pull $CI_REGISTRY_IMAGE/grammar:latest || true
     # builds the project, passing proxy variables, and vcs vars for LABEL
     # notice the cache-from, which is going to use the image we just pulled locally
     # the built image is tagged locally with the commit SHA, and then pushed to
@@ -69,10 +67,10 @@ Build_seniorproject_grammar:
       --pull
       --build-arg VCS_REF=$CI_COMMIT_SHA
       --build-arg VCS_URL=$CI_PROJECT_URL
-      --cache-from $CI_REGISTRY_IMAGE-grammar:latest
-      --tag $CI_REGISTRY_IMAGE-grammar:$CI_COMMIT_SHA
+      --cache-from $CI_REGISTRY_IMAGE/grammar:latest
+      --tag $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_SHA
       .
-    - docker push $CI_REGISTRY_IMAGE-grammar:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_SHA
   tags:
     - dikdik
 
@@ -80,9 +78,9 @@ test:
   stage: test
   script:
      - export SENIORPROJECT_IMAGE=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-     - export GRAMMAR_IMAGE=$CI_REGISTRY_IMAGE-grammar:$CI_COMMIT_SHA
+     - export GRAMMAR_IMAGE=$CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_SHA
      - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-     - docker pull $CI_REGISTRY_IMAGE-grammar:$CI_COMMIT_SHA
+     - docker pull $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_SHA
      - docker-compose -f docker-compose.yml -f docker-compose-ci.yml run web pytest --cov=seniorproject tests/
 #     - docker run $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA pytest --cov=seniorproject tests/
   tags:
@@ -152,6 +150,21 @@ Push tag:
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+  tags:
+    - dikdik
+
+Push tag grammar:
+  variables:
+    # Again, we do not need the source code here. Just playing with Docker.
+    GIT_STRATEGY: none
+  stage: push
+#  only:
+    # We want this job to be run on tags and develop only.
+#    - tags
+  script:
+    - docker pull $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_REF_NAME
   tags:
     - dikdik
 
