@@ -7,7 +7,7 @@ RUN unzip LanguageTool-$VERSION.zip \
 
 FROM openjdk:13-jdk-alpine
 ENV VERSION 4.8
-COPY --from=build /LanguageTool-$VERSION.zip /LanguageTool-$VERSION.zip
+COPY --from=build /LanguageTool-$VERSION /LanguageTool-$VERSION
 WORKDIR /LanguageTool-$VERSION
 CMD ["java", "-cp", "languagetool-server.jar", "org.languagetool.server.HTTPServer", "--port", "8081", "--public" ]
 EXPOSE 8081
