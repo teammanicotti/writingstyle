@@ -1,3 +1,4 @@
+"""Marks the spaCy doc with any spelling and grammar mistakes"""
 import requests
 from spellchecker import SpellChecker
 from spacy.tokens import Span, Token
@@ -5,7 +6,7 @@ from spacy.tokens import Span, Token
 
 # noinspection PyProtectedMember
 class GrammarChecking:
-
+    """Marks the spaCy doc with any spelling and grammar mistakes"""
     def __init__(self, spacy_instance, stop_words=None):
         self.nlp = spacy_instance
         self.stop_words = spacy_instance.Defaults.stop_words if stop_words is None else stop_words
@@ -55,7 +56,7 @@ class GrammarChecking:
         if len(matches) > 0:
             has_grammar_errors = True
             for match in matches:
-                recommendation.append({ "message": match["message"], "context": match["context"] });
+                recommendation.append({"message": match["message"], "context": match["context"]})
 
         return {"has_grammar_errors": has_grammar_errors, "recommendation": recommendation}
 
@@ -66,7 +67,6 @@ class GrammarChecking:
         :param sentences: str
         :return: doc
         """
-        results = []
         doc = self.nlp(sentences)
         for sentence in doc.sents:
             grammar_result = self.check_sentence_has_grammar_error(sentence.text)
