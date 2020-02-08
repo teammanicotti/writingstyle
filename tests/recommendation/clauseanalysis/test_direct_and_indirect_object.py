@@ -16,8 +16,8 @@ def sentence_to_mock_doc(text, mock_tokens=None):
 def test_check_sentence_direct_and_indirect_obj_rewrite_with_citation():
     text = 'I kicked the ball to her mom (n.d., ppg. 34).'
     doc = nlp(text)
-    assert ClauseAnalysis.check_sentence_direct_and_indirect_obj(next(doc.sents)) == 'I kicked her mom ' \
-                                                                                     'the ball (n.d., ppg. 34).'
+    result = ClauseAnalysis.check_sentence_direct_and_indirect_obj(next(doc.sents))
+    assert result == 'I kicked her mom the ball (n.d., ppg. 34).'
 
 
 def test_check_sentence_direct_and_indirect_obj_rewrite():
