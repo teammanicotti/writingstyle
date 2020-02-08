@@ -76,6 +76,7 @@ Build_seniorproject_grammar:
 
 test:
   stage: test
+  image: tiangolo/docker-with-compose
   script:
      - export SENIORPROJECT_IMAGE=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
      - export GRAMMAR_IMAGE=$CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_SHA
