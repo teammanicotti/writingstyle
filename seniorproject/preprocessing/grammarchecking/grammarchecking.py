@@ -1,7 +1,7 @@
 """Marks the spaCy doc with any spelling and grammar mistakes"""
 import requests
-from spellchecker import SpellChecker
 from spacy.tokens import Span, Token
+from spellchecker import SpellChecker
 
 
 # noinspection PyProtectedMember
