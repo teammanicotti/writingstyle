@@ -71,10 +71,8 @@ Build_seniorproject_grammar:
       --build-arg VCS_URL=$CI_PROJECT_URL
       --cache-from $CI_REGISTRY_IMAGE-grammar:latest
       --tag $CI_REGISTRY_IMAGE-grammar:$CI_COMMIT_SHA
-#      --tag $CI_REGISTRY_IMAGE-grammar:$CI_COMMIT_REF_NAME
       .
     - docker push $CI_REGISTRY_IMAGE-grammar:$CI_COMMIT_SHA
-#    - docker push $CI_REGISTRY_IMAGE-grammar:$CI_COMMIT_REF_NAME
   tags:
     - dikdik
 
