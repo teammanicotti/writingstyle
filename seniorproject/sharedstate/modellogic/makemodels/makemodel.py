@@ -42,7 +42,7 @@ if __name__ == "__main__":
     classifier = LogisticRegression()
 
     # Create pipeline using Bag of Words
-    pipe = Pipeline([("cleaner", model_logic.predictors()),
+    pipe = Pipeline([("cleaner", model_logic.Predictors()),
                      ('vectorizer', bow_vector),
                      ('classifier', classifier)])
 
