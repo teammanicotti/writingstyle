@@ -2,7 +2,7 @@ import en_core_web_lg
 import pytest
 from spacy.language import Language
 
-from preprocessing import spacy_extensions
+from seniorproject.preprocessing import spacy_extensions
 from seniorproject.recommendation.simpletocompound.model.sentencetype import \
     SentenceType
 from seniorproject.recommendation.simpletocompound.simpletocompound import \
