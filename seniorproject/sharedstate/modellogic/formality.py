@@ -8,13 +8,13 @@ should classify it
 
 import pickle
 import string
-import pandas as pd
 import os
-
-from sklearn.base import TransformerMixin
 from spacy.lang.en import English
 from spacy.lang.en.stop_words import STOP_WORDS
-import en_core_web_sm
+import pandas as pd
+
+from sklearn.base import TransformerMixin
+
 
 # Constants
 N_GRAM_RANGE = 2
@@ -22,34 +22,35 @@ USES_PUNCTUATION = True
 USES_STOP_WORDS = True
 
 # Create our list of punctuation marks
-punctuations = [] if USES_PUNCTUATION else string.punctuation
+PUNCTUATIONS = [] if USES_PUNCTUATION else string.punctuation
 
 # Create our list of stopwords
-stop_words = [] if USES_STOP_WORDS else STOP_WORDS
-
-# Load English tokenizer, tagger, parser, NER and word vectors
-parser = English()
-nlp = en_core_web_sm.load()
-
+STOP_WORDS = [] if USES_STOP_WORDS else STOP_WORDS
 
 def spacy_tokenizer(sentence):
-    # Creating our token object, which is used to create documents with linguistic annotations.
+    """Creates list of preprocessed spaCy tokens"""
+    parser = English()
+
+    # Creating our token object, which is used to create documents with
+    # linguistic annotations.
     mytokens = parser(sentence)
 
     # Lemmatizing each token and converting each token into lowercase
-    mytokens = [word.lemma_.lower().strip() if word.lemma_ != "-PRON-" else word.lower_ for word in mytokens]
+    mytokens = [word.lemma_.lower().strip() if word.lemma_ != "-PRON-"
+                else word.lower_ for word in mytokens]
 
     # Removing stop words
-    mytokens = [word for word in mytokens if word not in stop_words and word not in punctuations]
+    mytokens = [word for word in mytokens if word not in
+                STOP_WORDS and word not in PUNCTUATIONS]
 
     # return preprocessed list of tokens
     return mytokens
 
 
-class predictors(TransformerMixin):
-    def transform(self, X, **transform_params):
+class Predictors(TransformerMixin):
+    def transform(self, x, **transform_params):
         # Cleaning Text
-        return [clean_text(text) for text in X]
+        return [clean_text(text) for text in x]
 
     def fit(self, X, y=None, **fit_params):
         return self
@@ -73,8 +74,8 @@ FORMALITY_THRESHOLD = 3
 SAMPLE_SIZE = 10000
 
 
-def get_data(csvFile):
-    data = pd.read_csv(os.path.join(os.path.dirname(__file__), csvFile))
+def get_data(csv_file):
+    data = pd.read_csv(os.path.join(os.path.dirname(__file__), csv_file))
 
     # Fields for mturk data-set
     # x_sentences = data["Sentence"]
