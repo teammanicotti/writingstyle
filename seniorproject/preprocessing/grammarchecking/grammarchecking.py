@@ -8,9 +8,9 @@ from spellchecker import SpellChecker
 
 # noinspection PyProtectedMember
 class GrammarChecking:
+    """Marks the spaCy doc with any spelling and grammar mistakes"""
     GRAMMAR_API_URL = os.getenv('GRAMMAR_API_URL',
                                 'http://localhost:8081/v2/check')
-    """Marks the spaCy doc with any spelling and grammar mistakes"""
     def __init__(self, spacy_instance, stop_words=None):
         self.nlp = spacy_instance
         self.stop_words = spacy_instance.Defaults.stop_words if stop_words is None else stop_words
