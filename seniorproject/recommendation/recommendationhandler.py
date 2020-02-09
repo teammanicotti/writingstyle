@@ -11,6 +11,7 @@ from seniorproject.recommendation.simpletocompound.simpletocompound import \
 from seniorproject.recommendation.passivetoactive import passivetoactive
 from seniorproject.recommendation.sentimentreversal import sentimentreversal
 from seniorproject.recommendation.clauseanalysis import clauseanalysis
+from seniorproject.recommendation.formality import formality
 
 
 class RecommendationHandler:
@@ -35,7 +36,8 @@ class RecommendationHandler:
             passivetoactive.PassiveAnalyzer(),
             sentimentreversal.SentimentReversal(),
             comp_super.ComparativeSuperlativeAnalyzer(),
-            clauseanalysis.ClauseAnalysis()
+            clauseanalysis.ClauseAnalysis(),
+            formality.FormalityAnalyzer()
         ]
 
     def collect_recommendations(self, doc: Document) -> List[Recommendation]:
