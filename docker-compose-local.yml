@@ -6,8 +6,6 @@ services:
       - type: bind
         source: ./logs
         target: /seniorproject/logs
-    depends_on:
-      - grammar
     environment:
       GRAMMAR_API_URL: http://localhost:8081/v2/check
   grammar:
