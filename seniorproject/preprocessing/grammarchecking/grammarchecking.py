@@ -1,4 +1,6 @@
 """Marks the spaCy doc with any spelling and grammar mistakes"""
+import os
+
 import requests
 from spacy.tokens import Span, Token
 from spellchecker import SpellChecker
@@ -6,6 +8,8 @@ from spellchecker import SpellChecker
 
 # noinspection PyProtectedMember
 class GrammarChecking:
+    GRAMMAR_API_URL = os.getenv('GRAMMAR_API_URL',
+                                'http://localhost:8081/v2/check')
     """Marks the spaCy doc with any spelling and grammar mistakes"""
     def __init__(self, spacy_instance, stop_words=None):
         self.nlp = spacy_instance
@@ -44,7 +48,7 @@ class GrammarChecking:
         :return: boolean
         """
         params = [('language', 'en'), ('text', sentence)]
-        response = requests.get('http://grammar:8081/v2/check', params)
+        response = requests.get(self.GRAMMAR_API_URL, params)
         response_json = response.json()
         matches = response_json['matches']
         recommendation = []
