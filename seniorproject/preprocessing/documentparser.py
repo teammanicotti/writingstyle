@@ -12,7 +12,7 @@ class DocumentParser:
         self.spacy_instance = spacy_instance
         self._grammar_instance = GrammarChecking(spacy_instance)
         self.use_grammar_checking = bool(
-            os.getenv('SKIP_GRAMMAR_CHECKING', False)
+            os.getenv('SKIP_GRAMMAR_CHECKING', 'False')
         )
 
     def parse_document(
