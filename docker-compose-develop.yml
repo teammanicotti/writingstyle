@@ -4,6 +4,8 @@ services:
     image: registry.gitlab.com/seniorprojectntid/seniorproject:develop
     secrets:
       - sentry
+  grammar:
+    image: registry.gitlab.com/seniorprojectntid/seniorproject/grammar:develop
 
 secrets:
   sentry:
