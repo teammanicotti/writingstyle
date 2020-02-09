@@ -18,18 +18,21 @@ ATTRS = {
 
 def enable_spacy_extensions():
     """Enables custom extensions for spaCy for dealing with citations."""
-    Token.set_extension('is_in_text_citation', default=False)
+    Token.set_extension('is_in_text_citation', default=False, force=True)
     Span.set_extension(
         'tokens_without_citations',
-        getter=get_span_tokens_without_citations
+        getter=get_span_tokens_without_citations,
+        force=True
     )
     Span.set_extension(
         'text_without_citations',
-        getter=get_span_text_without_citations
+        getter=get_span_text_without_citations,
+        force=True
     )
     Span.set_extension(
         'text_with_ws_without_citations',
-        getter=get_span_text_with_ws_wo_cites
+        getter=get_span_text_with_ws_wo_cites,
+        force=True
     )
 
 

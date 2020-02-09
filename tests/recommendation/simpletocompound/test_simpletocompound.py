@@ -2,36 +2,31 @@ import en_core_web_lg
 import pytest
 from spacy.language import Language
 
+from seniorproject.preprocessing import spacy_extensions
 from seniorproject.recommendation.simpletocompound.model.sentencetype import \
     SentenceType
 from seniorproject.recommendation.simpletocompound.simpletocompound import \
     SimpleToCompound
-
-
+from tests.util.spacy import spacy_instance
 from tests.util.model import *
 
 
 @pytest.fixture
 def simple_compound():
-    spacy_instance = MagicMock(spec=Language)
+    spacy = MagicMock(spec=Language)
     tf_session = MagicMock()
     tf_encodings = MagicMock()
     tf_input_placeholder = MagicMock()
     tf_sentence_piece_processor = MagicMock()
 
     simple_compound = SimpleToCompound(
-        spacy_instance,
+        spacy,
         tf_session,
         tf_encodings,
         tf_input_placeholder,
         tf_sentence_piece_processor
     )
     return simple_compound
-
-
-@pytest.fixture
-def spacy_instance():
-    return en_core_web_lg.load()
 
 
 @pytest.fixture
@@ -54,10 +49,33 @@ def simple_sentences():
     text = 'Mark went to the store. His mom did not have food for dinner.'
 
     sentence1 = spacy_span_mock(
-        'Mark went to the store.'
+        'Mark went to the store.',
+        0,
+        22,
+        [
+            spacy_token_mock('Mark'),
+            spacy_token_mock('went'),
+            spacy_token_mock('to'),
+            spacy_token_mock('the'),
+            spacy_token_mock('store'),
+            spacy_token_mock('.', is_punct=True, idx=22)
+        ]
     )
     sentence2 = spacy_span_mock(
-        'His mom did not have food for dinner.'
+        'His mom did not have food for dinner.',
+        24,
+        60,
+        [
+            spacy_token_mock('His'),
+            spacy_token_mock('mom'),
+            spacy_token_mock('did'),
+            spacy_token_mock('not'),
+            spacy_token_mock('have'),
+            spacy_token_mock('food'),
+            spacy_token_mock('for'),
+            spacy_token_mock('dinner'),
+            spacy_token_mock('.', is_punct=True, idx=60)
+        ]
     )
     spacy_doc = spacy_doc_mock(
         [sentence1, sentence2]
@@ -73,10 +91,33 @@ def simple_and_compound():
     'This lowered his grade.'
 
     sentence1 = spacy_span_mock(
-        'Despite his efforts, John still failed his test.'
+        'Despite his efforts, John still failed his test.',
+        0,
+        47,
+        [
+            spacy_token_mock('Despite'),
+            spacy_token_mock('his'),
+            spacy_token_mock('efforts'),
+            spacy_token_mock(','),
+            spacy_token_mock('John'),
+            spacy_token_mock('still'),
+            spacy_token_mock('failed'),
+            spacy_token_mock('his'),
+            spacy_token_mock('test'),
+            spacy_token_mock('.', is_punct=True, idx=47)
+        ]
     )
     sentence2 = spacy_span_mock(
-        'This lowered his grade.'
+        'This lowered his grade.',
+        49,
+        71,
+        [
+            spacy_token_mock('This'),
+            spacy_token_mock('lowered'),
+            spacy_token_mock('his'),
+            spacy_token_mock('grade'),
+            spacy_token_mock('.', is_punct=True, idx=71)
+        ]
     )
     spacy_doc = spacy_doc_mock(
         [sentence1, sentence2]
