@@ -1,6 +1,6 @@
 from seniorproject.recommendation.clauseanalysis.clauseanalysis import ClauseAnalysis
 from tests.util.model import spacy_span_mock, spacy_doc_mock, paragraph_mock, document_mock, spacy_token_mock
-from seniorproject.sharedstate.sharedstate import spacy_instance as nlp
+from tests.util.spacy import spacy_instance as nlp
 
 clause_analysis = ClauseAnalysis()
 
