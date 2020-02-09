@@ -47,7 +47,9 @@ def spacy_token_mock(
         text: str,
         pos_: str = '',
         dep_: str = '',
-        head: MagicMock = None
+        head: MagicMock = None,
+        is_punct: bool = False,
+        idx: int = 0
 ) -> Token:
     """Creates a mock spaCy Token with the given text and part-of-speech"""
     token = MagicMock(spec=Token)
@@ -55,6 +57,8 @@ def spacy_token_mock(
     token.pos_ = pos_
     token.dep_ = dep_
     token.head = head
+    token.is_punct = is_punct
+    token.idx = idx
     return token
 
 
@@ -70,8 +74,14 @@ def spacy_span_mock(
     span.start_char = start_char
     span.end_char = end_char
     if tokens is not None:
-        span.__getitem__.side_effect = lambda x: tokens[x]
+        span.__getitem__.side_effect = lambda x: __token_getitem__(tokens, x)
         span.__iter__.side_effect = lambda: iter(tokens)
     else:
         span.__iter__.side_effect = lambda: iter([])
     return span
+
+
+def __token_getitem__(tokens: List[Token], x):
+    if isinstance(x, slice):
+        return tokens[x.start, x.stop]
+    return tokens[x]
