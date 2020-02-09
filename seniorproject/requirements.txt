@@ -4,7 +4,7 @@
 # make sure any dependency that would be needed for it to run independently
 # of the rest of the system is included.
 # Example: `-r semanticsimilarity/requirements.txt`
-gunicorn[gevent]==20.0.0
+gunicorn[gevent]==20.0.4
 falcon==2.0.0
 pytest==5.2.2
 pylint==2.4.3
