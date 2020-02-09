@@ -225,4 +225,5 @@ $RECYCLE.BIN/
 .idea
 spaCy
 .pycharmrc
+logs
 

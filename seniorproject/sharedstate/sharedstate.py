@@ -1,4 +1,7 @@
 """Contains state shared between WSGI forks"""
+import logging
+import os
+
 import en_core_web_lg
 import tensorflow as tf
 import tensorflow_hub as hub
@@ -47,6 +50,12 @@ def init_tf():
 
     return session, encodings, input_placeholder, sentence_piece_processor
 
+
+# Set up logging. Note: keep this above Tensorflow
+# initialization, it will steal the `logging` root logger.
+if not os.path.isdir('logs'):
+    os.mkdir('logs')
+logging.basicConfig(filename='logs/seniorproject.log', level=logging.INFO, filemode='a+')
 
 spacy_instance: Language = en_core_web_lg.load()
 spacy_extensions.enable_spacy_extensions()
