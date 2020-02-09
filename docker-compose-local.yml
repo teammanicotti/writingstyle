@@ -2,3 +2,12 @@ version: '3.1'
 services:
   web:
     build: .
+    depends_on:
+      - grammar
+    environment:
+      GRAMMAR_API_URL: http://localhost:8081/v2/check
+  grammar:
+    build:
+      context: grammar
+    ports:
+      - "8081:8081"
