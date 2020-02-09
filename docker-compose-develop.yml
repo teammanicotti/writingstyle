@@ -8,6 +8,8 @@ services:
       - type: bind
         source: ./logs
         target: /seniorproject/logs
+  grammar:
+    image: registry.gitlab.com/seniorprojectntid/seniorproject/grammar:develop
 
 secrets:
   sentry:

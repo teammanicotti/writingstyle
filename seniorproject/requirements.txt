@@ -10,6 +10,8 @@ pytest==5.2.2
 pylint==2.4.3
 pytest-cov==2.8.1
 sentry-sdk[falcon]==0.13.2
+pyspellchecker==0.5.3
+requests==2.22.0
 
 -r recommendation/simpletocompound/requirements.txt
 -r recommendation/passivetoactive/requirements.txt
