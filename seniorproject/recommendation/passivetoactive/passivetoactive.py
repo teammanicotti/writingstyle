@@ -60,7 +60,7 @@ class PassiveAnalyzer(RecommendationEngine):
         is_hard = False  # pylint: disable=unused-variable
         recommend_phrases = {}
 
-        for word in sentence:
+        for word in sentence._.tokens_without_citations:
             if word.dep_ == "nsubjpass":
                 is_passive = True
             elif word.dep_ == "auxpass":
