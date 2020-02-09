@@ -1,11 +1,11 @@
-version: '3.1'
+version: '3.7'
 services:
   web:
     build: .
     volumes:
       - type: bind
-      source: ./logs
-      target: /seniorproject/logs
+        source: ./logs
+        target: /seniorproject/logs
     depends_on:
       - grammar
     environment:
