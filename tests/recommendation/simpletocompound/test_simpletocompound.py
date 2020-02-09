@@ -7,8 +7,7 @@ from seniorproject.recommendation.simpletocompound.model.sentencetype import \
     SentenceType
 from seniorproject.recommendation.simpletocompound.simpletocompound import \
     SimpleToCompound
-
-
+from tests.util.spacy import spacy_instance
 from tests.util.model import *
 
 
@@ -28,14 +27,6 @@ def simple_compound():
         tf_sentence_piece_processor
     )
     return simple_compound
-
-
-@pytest.fixture(scope='module')
-def spacy_instance():
-    nlp = en_core_web_lg.load()
-    spacy_extensions.enable_spacy_extensions()
-    nlp.add_pipe(spacy_extensions.retokenize_citations, before='parser')
-    return nlp
 
 
 @pytest.fixture
