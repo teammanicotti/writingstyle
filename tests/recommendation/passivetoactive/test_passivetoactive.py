@@ -3,9 +3,9 @@ import spacy
 from seniorproject.recommendation.passivetoactive.passivetoactive import \
     PassiveAnalyzer
 from tests.util.model import *
+from tests.util.spacy import spacy_instance as nlp
 
 passiveAnalyzer = PassiveAnalyzer
-nlp = spacy.load('en_core_web_sm')
 
 '''
 Begin test fixtures
@@ -17,7 +17,7 @@ def passive_to_active():
 
 
 @pytest.fixture
-def single_sentence_pass_paragraph():
+def single_sentence_pass_paragraph(nlp):
     text = '"Help!" was called out by the man.'
     spacy_doc = nlp(text)
     paragraph = paragraph_mock(text, spacy_doc)
@@ -25,14 +25,14 @@ def single_sentence_pass_paragraph():
 
 
 @pytest.fixture
-def no_errors_single_setence():
+def no_errors_single_setence(nlp):
     text = 'The cat drank the milk.'
     spacy_doc = nlp(text)
     paragraph = paragraph_mock(text, spacy_doc)
     return document_mock(text, [paragraph])
 
 @pytest.fixture
-def dual_sentence_paragraph():
+def dual_sentence_paragraph(nlp):
     text = 'Odnblasnflqboanwfonj was written by the QA Engineer. This sentence was completed by a question mark?'
 
     spacy_doc = nlp(text)
@@ -40,7 +40,7 @@ def dual_sentence_paragraph():
     return document_mock(text, [paragraph])
 
 @pytest.fixture
-def single_sentence_ellipsis():
+def single_sentence_ellipsis(nlp):
     text = 'The input was ended by the QA Engineer...'
     spacy_doc = nlp(text)
     paragraph = paragraph_mock(text, spacy_doc)
@@ -48,7 +48,7 @@ def single_sentence_ellipsis():
 
 
 @pytest.fixture
-def paragraph_no_recs():
+def paragraph_no_recs(nlp):
     text = 'The cat drank the milk. Susan will bake two dozen cupcakes for ' \
            'the bake sale. The homeowners remodeled the house to help it sell. ' \
            'John was wrong all along.'
@@ -58,7 +58,7 @@ def paragraph_no_recs():
 
 
 @pytest.fixture
-def paragraph_multiple_recs():
+def paragraph_multiple_recs(nlp):
     text = 'Patch 1.2.1231e was deployed by the System Administrator. The input was correctly rendered by the system. Odnblasnflqboanwfonj ' \
            'was written by the QA Engineer.'
     spacy_doc = nlp(text)
