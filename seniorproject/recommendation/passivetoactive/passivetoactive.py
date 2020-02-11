@@ -130,10 +130,7 @@ class PassiveAnalyzer(RecommendationEngine):
             sentence = SentenceTools.build_sentence_from_list(
                 parsed_sentence, new_sentence, "...")
         elif subject and new_verb:
-            new_sentence.append(subject)
-            new_sentence.append(new_verb)
-            sentence = SentenceTools.build_sentence_from_list(
-                parsed_sentence, new_sentence, "...")
+            sentence = "Consider adding a subject and putting it before the object."
         return sentence
 
     @staticmethod
