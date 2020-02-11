@@ -20,17 +20,30 @@ class Combine:
         :param sentence2: spaCy Span object of the second sentence
         :return: list[str] of generated combined sentences
         """
-        s1_period_pos: int = sentence1.text.rfind('.')  # Find the period
-        s1_content: str = sentence1.text[0: s1_period_pos]
 
-        s2_period_pos: int = sentence2.text.rfind('.')  # Find the period
-        s2_content: str = sentence2.text[0: s2_period_pos]
+        # Change this to grab the last token, determine its offset in the
+        # sentence, then get the substring until it.  Then, do the same for
+        # sentence 2.  Store both whitespace-stripped last tokens to see if they
+        # are the same.  If they are, use that as the new punctuation.  If they
+        # are not, assume a period instead.
+        # Doing a reverse string find for a period is inaccurate--any
+        # punctuation could end the sentence.
+        s1_punct = sentence1[-1].text.strip() if sentence1[-1].is_punct else '.'
+        s1_punct_loc = sentence1[-1].idx - sentence1.start_char
+        s1_without_punct = sentence1.text[0: s1_punct_loc]
 
-        s2_first_letter: str = s2_content[0].lower() \
+        s2_punct = sentence2[-1].text.strip() if sentence2[-1].is_punct else '.'
+        s2_punct_loc = sentence2[-1].idx - sentence2.start_char
+        s2_without_punct = sentence2.text[0: s2_punct_loc]
+
+        s2_first_letter: str = s2_without_punct[0].lower() \
             if (sentence2[0].pos_ != 'PROPN' and sentence2[0].text != 'I') \
-            else s2_content[0]
+            else s2_without_punct[0]
+
+        punctuation = s1_punct if s1_punct == s2_punct else '.'
 
         return [
-            f"{s1_content}, {conjunction} {s2_first_letter}{s2_content[1:]}."
+            f"{s1_without_punct}, {conjunction} "
+            f"{s2_first_letter}{s2_without_punct[1:]}{punctuation}"
             for conjunction in Conjunctions
         ]

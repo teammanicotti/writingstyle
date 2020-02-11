@@ -31,7 +31,7 @@ before_script:
 #  - echo $DB_PASSWORD > ./.db_password
 #  - echo $DB_NAME > ./.db_name
 
-Build:
+Build_seniorproject:
   stage: build
   script:
     # fetches the latest image (not failing if image is not found)
@@ -47,18 +47,43 @@ Build:
       --build-arg VCS_URL=$CI_PROJECT_URL
       --cache-from $CI_REGISTRY_IMAGE:latest
       --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-      --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
       .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+  tags:
+    - dikdik
+
+Build_seniorproject_grammar:
+  stage: build
+  script:
+    # fetches the latest image (not failing if image is not found)
+    - docker pull $CI_REGISTRY_IMAGE/grammar:latest || true
+    # builds the project, passing proxy variables, and vcs vars for LABEL
+    # notice the cache-from, which is going to use the image we just pulled locally
+    # the built image is tagged locally with the commit SHA, and then pushed to
+    # the GitLab registry
+    - cd grammar
+    - >
+      docker build
+      --pull
+      --build-arg VCS_REF=$CI_COMMIT_SHA
+      --build-arg VCS_URL=$CI_PROJECT_URL
+      --cache-from $CI_REGISTRY_IMAGE/grammar:latest
+      --tag $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_SHA
+      .
+    - docker push $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_SHA
   tags:
     - dikdik
 
 test:
   stage: test
+  image: tiangolo/docker-with-compose
   script:
+     - export SENIORPROJECT_IMAGE=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+     - export GRAMMAR_IMAGE=$CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_SHA
      - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-     - docker run $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA pytest --cov=seniorproject tests/
+     - docker pull $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_SHA
+     - docker-compose -f docker-compose.yml -f docker-compose-ci.yml run web pytest --cov=seniorproject tests/
+#     - docker run $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA pytest --cov=seniorproject tests/
   tags:
     - dikdik
 
@@ -92,25 +117,25 @@ Push latest:
     - dikdik
 
 # Here, the goal is to tag the "develop" branch as "develop"
-Push develop:
-  variables:
-    # We are just playing with Docker here.
-    # We do not need GitLab to clone the source code.
-    GIT_STRATEGY: none
-  stage: push
-  only:
-    # Only "develop" should be tagged "develop"
-    - develop
-  script:
-    # Because we have no guarantee that this job will be picked up by the same runner
-    # that built the image in the previous step, we pull it again locally
-    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-    # Then we tag it "latest"
-    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:develop
-    # Annnd we push it.
-    - docker push $CI_REGISTRY_IMAGE:develop
-  tags:
-    - dikdik
+#Push develop:
+#  variables:
+#    # We are just playing with Docker here.
+#    # We do not need GitLab to clone the source code.
+#    GIT_STRATEGY: none
+#  stage: push
+#  only:
+#    # Only "develop" should be tagged "develop"
+#    - develop
+#  script:
+#    # Because we have no guarantee that this job will be picked up by the same runner
+#    # that built the image in the previous step, we pull it again locally
+#    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+#    # Then we tag it "latest"
+#    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:develop
+#    # Annnd we push it.
+#    - docker push $CI_REGISTRY_IMAGE:develop
+#  tags:
+#    - dikdik
 
 # Finally, the goal here is to Docker tag any Git tag
 # GitLab will start a new pipeline everytime a Git tag is created, which is pretty awesome
@@ -119,13 +144,28 @@ Push tag:
     # Again, we do not need the source code here. Just playing with Docker.
     GIT_STRATEGY: none
   stage: push
-  only:
+#  only:
     # We want this job to be run on tags and develop only.
-    - tags
+#    - tags
   script:
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+  tags:
+    - dikdik
+
+Push tag grammar:
+  variables:
+    # Again, we do not need the source code here. Just playing with Docker.
+    GIT_STRATEGY: none
+  stage: push
+#  only:
+    # We want this job to be run on tags and develop only.
+#    - tags
+  script:
+    - docker pull $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_REF_NAME
   tags:
     - dikdik
 

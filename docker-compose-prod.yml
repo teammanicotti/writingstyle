@@ -1,11 +1,13 @@
-version: '3.1'
+version: '3.7'
 services:
   web:
     image: registry.gitlab.com/seniorprojectntid/seniorprojectntid:develop
     secrets:
-      - sentry_url
+      - sentry
+  grammar:
+    image: registry.gitlab.com/seniorprojectntid/seniorproject/grammar:develop
 
 secrets:
-  sentry_url:
+  sentry:
     file: ./.sentry_dsn
 

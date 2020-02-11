@@ -4,21 +4,29 @@ and generate new sentences in the active voice
 Author: Robert Liedka (rl5849)
 """
 import re
+from typing import List
+
 import sentry_sdk
 from sentry_sdk import capture_exception
+from pattern.en import conjugate, PRESENT, PAST, PL, SG, INFINITIVE, \
+    PARTICIPLE  # Yes, these always have red sqiggles under them
+
 from seniorproject.recommendation.passivetoactive.SentenceTools import \
     SentenceTools
 from seniorproject.recommendation.recommendationengine import \
     RecommendationEngine
-from pattern.en import conjugate, PRESENT, PAST, PL, SG, INFINITIVE, \
-    PARTICIPLE  # Yes, these always have red sqiggles under them
 from seniorproject.model.recommendationtype import RecommendationType
 from seniorproject.model.recommendation import Recommendation
 from seniorproject.model.document import Document
-from typing import List
+
 
 
 class PassiveAnalyzer(RecommendationEngine):
+    """
+    Passive to active: class containing method to identify passive voice
+    and generate new sentences in the active voice
+    Author: Robert Liedka (rl5849)
+    """
     def __init__(self):
         super(PassiveAnalyzer, self).__init__()
 
@@ -33,12 +41,12 @@ class PassiveAnalyzer(RecommendationEngine):
         for paragraph in doc.paragraphs:
             for sent in paragraph.spacy_doc.sents:
                 results.extend(
-                    PassiveAnalyzer.annotateSentence(sent, paragraph_index))
+                    PassiveAnalyzer.annotate_sentence(sent, paragraph_index))
             paragraph_index += 1
         return results
 
     @staticmethod
-    def annotateSentence(sentence, paragraph_index):
+    def annotate_sentence(sentence, paragraph_index):
         """
         Annotate sentence: Perform passive analysis and generate new sentence
         if passive
@@ -48,7 +56,8 @@ class PassiveAnalyzer(RecommendationEngine):
         """
         results = []
         is_passive = False
-        is_hard = False
+        # TODO: Are we going to do anything with this?
+        is_hard = False  # pylint: disable=unused-variable
         recommend_phrases = {}
 
         for word in sentence:
@@ -59,17 +68,18 @@ class PassiveAnalyzer(RecommendationEngine):
                     "index": word.head.i}
                 is_passive = True
             elif word.pos_ == "ADP" and word.right_edge.dep_ == "pobj":
-                is_hard = True
+                is_hard = True  # TODO: Are we going to do anything with this?
 
         if is_passive:
-            for rec, info in recommend_phrases.items():
+            for rec in recommend_phrases:
                 results.append(Recommendation(
                     RecommendationType.PASSIVE_TO_ACTIVE,
                     rec,
                     sentence.start,
                     sentence.end,
                     paragraph_index,  # paragraph index
-                    PassiveAnalyzer.create_new_sentence(sentence),
+                    [PassiveAnalyzer.create_new_sentence(sentence)],
+                    sentence.text + RecommendationType.PASSIVE_TO_ACTIVE,
                     0  # Confidence
                 ))
         return results
@@ -80,7 +90,7 @@ class PassiveAnalyzer(RecommendationEngine):
         Create a new sentence: conjugate verb and re-order parts of speech to
         make an active voice sentence
         :param parsed_sentence: spaCy object
-        :return: array containing one sentence
+        :return: string of sentence
         """
         # Questions never come out right
         if parsed_sentence[-1].text == "?":
@@ -124,10 +134,14 @@ class PassiveAnalyzer(RecommendationEngine):
             new_sentence.append(new_verb)
             sentence = SentenceTools.build_sentence_from_list(
                 parsed_sentence, new_sentence, "...")
-        return [sentence]
+        return sentence
 
     @staticmethod
     def conjugate(verb):
+        """Attempt to conjugate verb to past tense
+        :param verb string of verb to conjugate
+        :return string of past-tense conjuated verb
+        """  # TODO: Add param and return details here
         try:
             new_verb = conjugate(verb=verb, tense=PAST, number=PL)
             return new_verb
@@ -149,8 +163,10 @@ class PassiveAnalyzer(RecommendationEngine):
             citation,
             punct
     ):
-        new_sentence = []
-        new_sentence.append(new_actor)
+        """
+        Assemble sentence in active voice
+        """
+        new_sentence = [new_actor]
         if adverb != "":
             new_sentence.append(adverb)
         new_sentence.append(new_verb)
@@ -175,9 +191,11 @@ class PassiveAnalyzer(RecommendationEngine):
         if citation != "":
             for i in range(len(new_sentence)):
                 if new_sentence[i] != citation:
-                    new_sentence[i] = re.sub("\s*" + re.escape(citation),
-                                             "",
-                                             new_sentence[i])
+                    new_sentence[i] = re.sub(
+                        r"\s*" + re.escape(citation),
+                        "",
+                        new_sentence[i]
+                    )
 
         return SentenceTools.build_sentence_from_list(
             parsed_sentence,
