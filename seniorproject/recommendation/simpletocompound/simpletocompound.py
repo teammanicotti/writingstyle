@@ -78,7 +78,8 @@ class SimpleToCompound(RecommendationEngine):
                     .determine_similarity([
                         first.span._.text_without_citations,
                         second.span._.text_without_citations
-                ])
+                    ]
+                )
                 results.append(Recommendation(
                     RecommendationType.SIMPLE_TO_COMPOUND,
                     f'{first.text} {second.text}',

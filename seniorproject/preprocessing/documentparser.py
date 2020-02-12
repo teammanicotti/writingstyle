@@ -11,7 +11,7 @@ class DocumentParser:
     def __init__(self, spacy_instance):
         self.spacy_instance = spacy_instance
         self._grammar_instance = GrammarChecking(spacy_instance)
-        self.use_grammar_checking = bool(
+        self.use_grammar_checking = not bool(
             os.getenv('SKIP_GRAMMAR_CHECKING', 'False')
         )
 
@@ -31,6 +31,6 @@ class DocumentParser:
             ]
         else:
             parsed_paragraphs = [
-                self.spacy_instance.check_sentences(p) for p in paragraphs
+                self.spacy_instance(p) for p in paragraphs
             ]
         return Document(text, parsed_paragraphs)

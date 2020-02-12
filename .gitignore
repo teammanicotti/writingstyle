@@ -3,12 +3,8 @@
 # Edit at https://www.gitignore.io/?templates=git,macos,python,windows
 
 ### Project Env Files ###
-.db_name
-.db_password
-.db_root_password
-.db_url
-.db_user
 .sentry_dsn
+.sentry_dsn_default
 
 ### Git ###
 # Created by git for backups. To disable backups in Git:
