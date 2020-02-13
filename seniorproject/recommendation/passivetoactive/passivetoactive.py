@@ -72,20 +72,24 @@ class PassiveAnalyzer(RecommendationEngine):
 
         if is_passive:
             for rec in recommend_phrases:
-                results.append(Recommendation(
+                is_advice = False
+                new_rec = Recommendation(
                     RecommendationType.PASSIVE_TO_ACTIVE,
-                    rec,
+                    sentence.text,
                     sentence.start,
                     sentence.end,
                     paragraph_index,  # paragraph index
-                    [PassiveAnalyzer.create_new_sentence(sentence)],
+                    [PassiveAnalyzer.create_new_sentence(sentence, is_advice)],
                     sentence.text + RecommendationType.PASSIVE_TO_ACTIVE,
                     0  # Confidence
-                ))
+                )
+                new_rec.is_replaceable = (not is_advice)
+                new_rec.text_to_highlight = rec
+                results.append(new_rec)
         return results
 
     @staticmethod
-    def create_new_sentence(parsed_sentence):
+    def create_new_sentence(parsed_sentence, is_advise):
         """
         Create a new sentence: conjugate verb and re-order parts of speech to
         make an active voice sentence
@@ -130,6 +134,7 @@ class PassiveAnalyzer(RecommendationEngine):
             sentence = SentenceTools.build_sentence_from_list(
                 parsed_sentence, new_sentence, "...")
         elif subject and new_verb:
+            is_advise = True
             sentence = "Consider adding a subject and putting it before the object."
         return sentence
 
