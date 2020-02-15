@@ -53,8 +53,8 @@ class SimpleToCompound(RecommendationEngine):
         :return: list of recommendations created
         """
         results = []
-        sentences = []
         for paragraph in doc.paragraphs:
+            sentences = []
             if len(list(paragraph.spacy_doc.sents)) < 2:
                 continue
             for sent in paragraph.spacy_doc.sents:
@@ -70,29 +70,28 @@ class SimpleToCompound(RecommendationEngine):
                     )
                 )
 
-        sentence_pairs = list(zip(sentences, sentences[1:]))
-        for first, second in sentence_pairs:
-            if first.sentence_type is SentenceType.SIMPLE and \
-                    second.sentence_type is SentenceType.SIMPLE:
-                similarity_scores = self.similarity_classifier \
-                    .determine_similarity([
-                        first.span._.text_without_citations,
-                        second.span._.text_without_citations
-                    ]
-                )
-                results.append(Recommendation(
-                    RecommendationType.SIMPLE_TO_COMPOUND,
-                    f'{first.text} {second.text}',
-                    first.start_position,
-                    second.end_position,
-                    first.paragraph_idx,
-                    Combine.generate_combined(
-                        first.span,
-                        second.span
-                    ),
-                    f'{first.text} {second.text}',
-                    similarity_scores.min().item()  # pylint: disable=no-member
-                ))
+            sentence_pairs = list(zip(sentences, sentences[1:]))
+            for first, second in sentence_pairs:
+                if first.sentence_type is SentenceType.SIMPLE and \
+                        second.sentence_type is SentenceType.SIMPLE:
+                    similarity_scores = self.similarity_classifier \
+                        .determine_similarity([
+                            first.span._.text_without_citations,
+                            second.span._.text_without_citations
+                        ])
+                    results.append(Recommendation(
+                        RecommendationType.SIMPLE_TO_COMPOUND,
+                        f'{first.text} {second.text}',
+                        first.start_position,
+                        second.end_position,
+                        first.paragraph_idx,
+                        Combine.generate_combined(
+                            first.span,
+                            second.span
+                        ),
+                        f'{first.text} {second.text}',
+                        similarity_scores.min().item()  # pylint: disable=no-member
+                    ))
         return results
 
     @staticmethod
