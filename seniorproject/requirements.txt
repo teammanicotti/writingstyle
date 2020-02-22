@@ -4,12 +4,16 @@
 # make sure any dependency that would be needed for it to run independently
 # of the rest of the system is included.
 # Example: `-r semanticsimilarity/requirements.txt`
-gunicorn[gevent]==20.0.0
+gunicorn[gevent]==20.0.4
 falcon==2.0.0
 pytest==5.2.2
 pylint==2.4.3
 pytest-cov==2.8.1
 sentry-sdk[falcon]==0.13.2
+pyspellchecker==0.5.3
+requests==2.22.0
+pandas==1.0.1
+scikit-learn==0.22.1
 
 -r recommendation/simpletocompound/requirements.txt
 -r recommendation/passivetoactive/requirements.txt

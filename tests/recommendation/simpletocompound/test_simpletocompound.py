@@ -1,77 +1,32 @@
 import en_core_web_lg
 import pytest
 from spacy.language import Language
-import tensorflow as tf
-import tensorflow_hub as hub
-import sentencepiece as spm
 
-from preprocessing import spacy_extensions
+from seniorproject.preprocessing import spacy_extensions
 from seniorproject.recommendation.simpletocompound.model.sentencetype import \
     SentenceType
 from seniorproject.recommendation.simpletocompound.simpletocompound import \
     SimpleToCompound
-# from sharedstate.sharedstate import init_tf
-
+from tests.util.spacy import spacy_instance
 from tests.util.model import *
-from tests.util.nlp import nlp
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture
 def simple_compound():
-    spacy_instance = MagicMock(spec=Language)
-    # tf_session, tf_encodings, tf_input_placeholder, tf_sentence_piece_processor\
-    #     = init_tf()
-
-    graph = tf.compat.v1.Graph()
-    with graph.as_default():  # pylint: disable=not-context-manager
-        input_placeholder = tf.compat.v1.sparse_placeholder(
-            tf.int64,
-            shape=[None, None]
-        )
-        module = hub.Module(
-            'https://tfhub.dev/google/universal-sentence-encoder-lite/2'
-        )
-        init_op = tf.group(
-            [
-                tf.compat.v1.global_variables_initializer(),
-                tf.compat.v1.tables_initializer()
-            ]
-        )
-        encodings = module(
-            inputs=dict(
-                values=input_placeholder.values,
-                indices=input_placeholder.indices,
-                dense_shape=input_placeholder.dense_shape
-            )
-        )
-
-        session = tf.compat.v1.Session(graph=graph)
-        spm_path = session.run(module(signature='spm_path'))
-        graph.finalize()
-        session.run(init_op)
-        sentence_piece_processor = spm.SentencePieceProcessor()
-        sentence_piece_processor.Load(spm_path)
-
-    # Reduce logging output.
-    tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+    spacy = MagicMock(spec=Language)
+    tf_session = MagicMock()
+    tf_encodings = MagicMock()
+    tf_input_placeholder = MagicMock()
+    tf_sentence_piece_processor = MagicMock()
 
     simple_compound = SimpleToCompound(
-        spacy_instance,
-        session,
-        encodings,
-        input_placeholder,
-        sentence_piece_processor
+        spacy,
+        tf_session,
+        tf_encodings,
+        tf_input_placeholder,
+        tf_sentence_piece_processor
     )
     return simple_compound
-
-
-# @pytest.fixture(scope='session')
-# def spacy_instance():
-#     spacy_instance = en_core_web_lg.load()
-#     spacy_extensions.enable_spacy_extensions()
-#     spacy_instance.add_pipe(spacy_extensions.retokenize_citations,
-#                             before='parser')
-#     return spacy_instance
 
 
 @pytest.fixture
@@ -95,10 +50,33 @@ def simple_sentences():
     text = 'Mark went to the store. His mom did not have food for dinner.'
 
     sentence1 = spacy_span_mock(
-        'Mark went to the store.'
+        'Mark went to the store.',
+        0,
+        22,
+        [
+            spacy_token_mock('Mark'),
+            spacy_token_mock('went'),
+            spacy_token_mock('to'),
+            spacy_token_mock('the'),
+            spacy_token_mock('store'),
+            spacy_token_mock('.', is_punct=True, idx=22)
+        ]
     )
     sentence2 = spacy_span_mock(
-        'His mom did not have food for dinner.'
+        'His mom did not have food for dinner.',
+        24,
+        60,
+        [
+            spacy_token_mock('His'),
+            spacy_token_mock('mom'),
+            spacy_token_mock('did'),
+            spacy_token_mock('not'),
+            spacy_token_mock('have'),
+            spacy_token_mock('food'),
+            spacy_token_mock('for'),
+            spacy_token_mock('dinner'),
+            spacy_token_mock('.', is_punct=True, idx=60)
+        ]
     )
     spacy_doc = spacy_doc_mock(
         [sentence1, sentence2]
@@ -114,10 +92,33 @@ def simple_and_compound():
     'This lowered his grade.'
 
     sentence1 = spacy_span_mock(
-        'Despite his efforts, John still failed his test.'
+        'Despite his efforts, John still failed his test.',
+        0,
+        47,
+        [
+            spacy_token_mock('Despite'),
+            spacy_token_mock('his'),
+            spacy_token_mock('efforts'),
+            spacy_token_mock(','),
+            spacy_token_mock('John'),
+            spacy_token_mock('still'),
+            spacy_token_mock('failed'),
+            spacy_token_mock('his'),
+            spacy_token_mock('test'),
+            spacy_token_mock('.', is_punct=True, idx=47)
+        ]
     )
     sentence2 = spacy_span_mock(
-        'This lowered his grade.'
+        'This lowered his grade.',
+        49,
+        71,
+        [
+            spacy_token_mock('This'),
+            spacy_token_mock('lowered'),
+            spacy_token_mock('his'),
+            spacy_token_mock('grade'),
+            spacy_token_mock('.', is_punct=True, idx=71)
+        ]
     )
     spacy_doc = spacy_doc_mock(
         [sentence1, sentence2]
@@ -175,28 +176,27 @@ def test_analyze_simple_and_compound_sentence(
 
 def test_sentence_type_simple(
         simple_compound,
-        nlp
+        spacy_instance
 ):
-    document = nlp('I like tea.')
+    document = spacy_instance('I like tea.')
     assert simple_compound.sentence_type(list(document.sents)[0]) == \
        SentenceType.SIMPLE
 
 
 def test_sentence_type_compound(
         simple_compound,
-        nlp
+        spacy_instance
 ):
-    document = nlp('I like tea, and he likes coffee.')
-    document.paragraphs
+    document = spacy_instance('I like tea, and he likes coffee.')
     assert simple_compound.sentence_type(list(document.sents)[0]) == \
        SentenceType.COMPOUND
 
 
 def test_sentence_type_complex(
         simple_compound,
-        nlp
+        spacy_instance
 ):
-    document = nlp(
+    document = spacy_instance(
         'When the kettle begins to whistle, you must take it off the stove.'
     )
     assert simple_compound.sentence_type(list(document.sents)[0]) == \
@@ -205,9 +205,9 @@ def test_sentence_type_complex(
 
 def test_sentence_type_complex_compound(
         simple_compound,
-        nlp
+        spacy_instance
 ):
-    document = nlp(
+    document = spacy_instance(
         'Erin loves her brother, and he loves her too because she '
         'pays his bills.'
     )

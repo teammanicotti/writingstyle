@@ -80,10 +80,10 @@ class SentenceTools:
             if "subj" in word.dep_:
                 x = str(
                     word.doc[
-                    word.left_edge.i: word.right_edge.i + (
-                        2 if word.doc[word.right_edge.i + 1].is_right_punct
-                        else 1)
-                    ]
+                        word.left_edge.i: word.right_edge.i + (
+                            2 if word.doc[word.right_edge.i + 1].is_right_punct
+                            else 1)
+                        ]
                 )
                 return x
 
@@ -129,8 +129,7 @@ class SentenceTools:
             elif parsed_sentence[i].pos_ == "PROPN":
                 phrases_to_be_capitalized.append(
                     str(parsed_sentence.doc[
-                        parsed_sentence[i].left_edge.i: parsed_sentence[
-                                                            i].right_edge.i + 1]))
+                        parsed_sentence[i].left_edge.i: parsed_sentence[i].right_edge.i + 1]))
                 if parsed_sentence[i].dep_ == "compound":
                     compounds.append(parsed_sentence[i].text)
                 current_position = parsed_sentence[i].right_edge.i + 2

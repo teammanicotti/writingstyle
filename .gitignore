@@ -3,12 +3,8 @@
 # Edit at https://www.gitignore.io/?templates=git,macos,python,windows
 
 ### Project Env Files ###
-.db_name
-.db_password
-.db_root_password
-.db_url
-.db_user
 .sentry_dsn
+.sentry_dsn_default
 
 ### Git ###
 # Created by git for backups. To disable backups in Git:
@@ -206,6 +202,7 @@ $RECYCLE.BIN/
 *.lnk
 
 ### VisualStudioCode ###
+.vscode
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -216,9 +213,13 @@ $RECYCLE.BIN/
 # Ignore all local history of files
 .history
 
+### Intellij ###
+.idea
 
 # End of https://www.gitignore.io/api/git,macos,python,windows
 # Pycharm
 .idea
 spaCy
+.pycharmrc
+logs
 

@@ -1,4 +1,7 @@
 """Contains state shared between WSGI forks"""
+import logging
+import os
+
 import en_core_web_lg
 import tensorflow as tf
 import tensorflow_hub as hub
@@ -6,7 +9,8 @@ import sentencepiece as spm
 from spacy.language import Language
 
 from seniorproject.preprocessing import spacy_extensions
-
+from seniorproject.sharedstate.ensemble_pipeline import EnsemblePipeline
+from seniorproject.sharedstate.modellogic.formality import load_model
 
 def init_tf():
     """Load in Universal Sentence Encoder and SentencePiece modules.
@@ -48,9 +52,31 @@ def init_tf():
     return session, encodings, input_placeholder, sentence_piece_processor
 
 
+# Set up logging. Note: keep this above Tensorflow
+# initialization, it will steal the `logging` root logger.
+if not os.path.isdir('logs'):
+    os.mkdir('logs')
+logging.basicConfig(filename='logs/seniorproject.log', level=logging.INFO, filemode='a+')
+
 spacy_instance: Language = en_core_web_lg.load()
 spacy_extensions.enable_spacy_extensions()
 spacy_instance.add_pipe(spacy_extensions.retokenize_citations, before='parser')
 
 tf_session, tf_encodings, tf_input_placeholder, tf_sentence_piece_processor = \
     init_tf()
+
+# Load the formality models into shared state
+# This will load all models in the `active_models` directory under the formality feature
+formality_models_fps = []
+for subdir, dirs, files in os.walk(os.sep.join(["seniorproject", "recommendation", "formality", "active_models"])):
+    formality_models_fps += list(map(lambda file: subdir + os.sep + file, files))
+
+formality_model = EnsemblePipeline(
+    list(
+        map(
+            lambda model_file:
+                load_model(model_file),
+            formality_models_fps
+        )
+    )
+)
