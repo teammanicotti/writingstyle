@@ -10,3 +10,4 @@ class RecommendationType(str, Enum):
     COMPARATIVE = 'Comparative'
     SUPERLATIVE = 'Superlative'
     DIRECT_INDIRECT_CHECKING = 'DirectIndirectObjectChecking'
+    FORMALITY = "Formality"

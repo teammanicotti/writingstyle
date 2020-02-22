@@ -2,22 +2,10 @@ import en_core_web_lg
 import pytest
 
 from seniorproject.preprocessing import spacy_extensions
-from tests.util.nlp import nlp
+from tests.util.spacy import spacy_instance
 
-
-# @pytest.fixture(scope='session')
-# def nlp():
-#     spacy_instance = en_core_web_lg.load()
-#     spacy_extensions.enable_spacy_extensions()
-#     spacy_instance.add_pipe(
-#         spacy_extensions.retokenize_citations,
-#         before='parser'
-#     )
-#     return spacy_instance
-
-
-def test_et_al_author_nd_pp(nlp):
-    parsed_sent = nlp(
+def test_et_al_author_nd_pp(spacy_instance):
+    parsed_sent = spacy_instance(
         'He is eating a sandwich (Robers et al., n.d., pp. 34-36).'
     )
 
@@ -33,8 +21,8 @@ def test_et_al_author_nd_pp(nlp):
     )) == []
 
 
-def test_et_al_author_year_p(nlp):
-    parsed_sent = nlp(
+def test_et_al_author_year_p(spacy_instance):
+    parsed_sent = spacy_instance(
         'John likes pizza (Markowski et al., 1872, p. 34).'
     )
 
@@ -50,8 +38,8 @@ def test_et_al_author_year_p(nlp):
     )) == []
 
 
-def test_ampersand_year_ppg(nlp):
-    parsed_sent = nlp(
+def test_ampersand_year_ppg(spacy_instance):
+    parsed_sent = spacy_instance(
         'Our grades are exceptional (Markowski & Sarkowitz, 1995, ppg. 34).'
     )
 
@@ -67,8 +55,8 @@ def test_ampersand_year_ppg(nlp):
     )) == []
 
 
-def test_year_pg(nlp):
-    parsed_sent = nlp(
+def test_year_pg(spacy_instance):
+    parsed_sent = spacy_instance(
         'Markowski describes our grades as exceptional (1995, ppg. 34).'
     )
 
@@ -84,8 +72,8 @@ def test_year_pg(nlp):
     )) == []
 
 
-def test_nd_p(nlp):
-    parsed_sent = nlp(
+def test_nd_p(spacy_instance):
+    parsed_sent = spacy_instance(
         'Markowski describes our grades as exceptional (n.d., ppg. 34).'
     )
 
@@ -101,8 +89,8 @@ def test_nd_p(nlp):
     )) == []
 
 
-def test_page_only(nlp):
-    parsed_sent = nlp(
+def test_page_only(spacy_instance):
+    parsed_sent = spacy_instance(
         'Tilly (1992) describes war as the primary driver of the creation of a '
         'durable state structure (p. 79).'
     )
