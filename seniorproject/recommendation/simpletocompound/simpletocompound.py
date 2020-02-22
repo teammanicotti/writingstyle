@@ -75,10 +75,12 @@ class SimpleToCompound(RecommendationEngine):
             if first.sentence_type is SentenceType.SIMPLE and \
                     second.sentence_type is SentenceType.SIMPLE:
                 similarity_scores = self.similarity_classifier \
-                    .determine_similarity([
-                        first.span._.text_without_citations,
-                        second.span._.text_without_citations
-                ])
+                    .determine_similarity(
+                        [
+                            first.span._.text_without_citations,
+                            second.span._.text_without_citations
+                        ]
+                    )
                 similarity_score = similarity_scores.min().item()  # pylint: disable=no-member,line-too-long
 
                 if similarity_score >= kwargs.get('similarity_threshold'):
@@ -93,7 +95,7 @@ class SimpleToCompound(RecommendationEngine):
                             second.span
                         ),
                         f'{first.text} {second.text}',
-
+                        similarity_score
                     ))
         return results
 
