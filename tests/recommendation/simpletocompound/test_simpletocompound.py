@@ -6,6 +6,7 @@ from seniorproject.recommendation.simpletocompound.model.sentencetype import \
 from seniorproject.recommendation.simpletocompound.simpletocompound import \
     SimpleToCompound
 from tests.util.model import *
+from tests.util.spacy import spacy_instance
 
 
 @pytest.fixture
