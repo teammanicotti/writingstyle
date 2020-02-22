@@ -1,13 +1,10 @@
-import en_core_web_lg
 import pytest
 from spacy.language import Language
 
-from seniorproject.preprocessing import spacy_extensions
 from seniorproject.recommendation.simpletocompound.model.sentencetype import \
     SentenceType
 from seniorproject.recommendation.simpletocompound.simpletocompound import \
     SimpleToCompound
-from tests.util.spacy import spacy_instance
 from tests.util.model import *
 
 
@@ -141,6 +138,15 @@ def test_analyze_simple_sentences(
 ):
     simple_compound.sentence_type = MagicMock(
         side_effect=lambda _: SentenceType.SIMPLE)
+
+    similarity_classifier = MagicMock()
+    similarity_scores = MagicMock()
+    min_mock = MagicMock()
+
+    min_mock.item = MagicMock(return_value=0.4)
+    similarity_scores.min = MagicMock(return_value=min_mock)
+    similarity_classifier.determine_similarity = MagicMock(return_value=similarity_scores)
+    simple_compound.similarity_classifier = similarity_classifier
 
     assert simple_compound.analyze(
         simple_sentences,
