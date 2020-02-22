@@ -70,7 +70,7 @@ class ComparativeSuperlativeAnalyzer(RecommendationEngine):
     superlative usage
     """
 
-    def analyze(self, doc: Document) -> List[Recommendation]:
+    def analyze(self, doc: Document, **kwargs) -> List[Recommendation]:
 
         results = []
         paragraph_index = 0
