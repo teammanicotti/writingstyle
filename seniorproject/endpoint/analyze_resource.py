@@ -26,7 +26,11 @@ class AnalyzeResource:
         """
         doc = self.document_parser.parse_document(
             req.media['text'],
-            req.media['paragraphs'],
+            req.media['paragraphs']
         )
-        recs = self.recommendation_handler.collect_recommendations(doc)
+        similarity_threshold = req.media['similarityThreshold']
+        recs = self.recommendation_handler.collect_recommendations(
+            doc,
+            similarity_threshold
+        )
         resp.media = {'results': recs}

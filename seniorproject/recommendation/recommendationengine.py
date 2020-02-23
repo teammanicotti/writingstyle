@@ -12,5 +12,5 @@ class RecommendationEngine(ABC):
     a document and returns a list of recommendations.
     """
     @abstractmethod
-    def analyze(self, doc: Document) -> List[Recommendation]:
+    def analyze(self, doc: Document, **kwargs) -> List[Recommendation]:
         """Generates a list of recommendations for a given document"""
