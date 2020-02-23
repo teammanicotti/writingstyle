@@ -30,7 +30,7 @@ class PassiveAnalyzer(RecommendationEngine):
     def __init__(self):
         super(PassiveAnalyzer, self).__init__()
 
-    def analyze(self, doc: Document) -> List[Recommendation]:
+    def analyze(self, doc: Document, **kwargs) -> List[Recommendation]:
         """
         Main analyze method
         :param doc:

@@ -16,7 +16,7 @@ class SentimentReversal(RecommendationEngine):
     def __init__(self):
         super(SentimentReversal, self).__init__()
 
-    def analyze(self, doc: Document) -> List[Recommendation]:
+    def analyze(self, doc: Document, **kwargs) -> List[Recommendation]:
         """
         Main analyze method - Reports all recommendations for sentiment reversal
         Ex: He was not happy -> He was unhappy
