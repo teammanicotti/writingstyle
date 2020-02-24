@@ -46,7 +46,7 @@ class SentimentReversal(RecommendationEngine):
         """
         results = []
 
-        for word in sentence:
+        for word in sentence._.tokens_without_citations:
             if word.text == 'not':
                 ants = SentimentReversal.get_antonyms_for_word(
                     sentence[word.i - sentence[0].i + 1].text)

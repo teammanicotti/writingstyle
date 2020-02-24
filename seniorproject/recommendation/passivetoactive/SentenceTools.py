@@ -136,10 +136,7 @@ class SentenceTools:
 
         # Swap all those substring with properly capitalized versions
         for phrase in phrases_to_be_capitalized:
-            recommendation = re.sub(phrase.lower(), string.capwords(phrase),
+            recommendation = re.sub(re.escape(phrase.lower()), string.capwords(phrase),
                                     recommendation)
 
-        # TODO: Why is this here? ~Devon
-        # for phrase in compounds:
-        #     recommendation = re.sub(phrase.lower(), phrase.upper(), recommendation, flags=re.I)
         return recommendation[0].upper() + recommendation[1:]

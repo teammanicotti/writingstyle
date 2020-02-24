@@ -36,6 +36,8 @@ class Recommendation:
         self.new_values = new_values
         self.uuid = str(uuid.uuid5(self.UUID_BASE, hash_value))
         self.confidence = confidence
+        self.text_to_highlight = original_text
+        self.is_replaceable = True
 
     def to_json(self):
         """Creates a JSON-compatible representation of the recommendation."""
