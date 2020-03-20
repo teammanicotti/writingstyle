@@ -49,7 +49,8 @@ def spacy_token_mock(
         dep_: str = '',
         head: MagicMock = None,
         is_punct: bool = False,
-        idx: int = 0
+        idx: int = 0,
+        is_space: bool = False
 ) -> Token:
     """Creates a mock spaCy Token with the given text and part-of-speech"""
     token = MagicMock(spec=Token)
@@ -59,6 +60,7 @@ def spacy_token_mock(
     token.head = head
     token.is_punct = is_punct
     token.idx = idx
+    token.is_space = is_space
     return token
 
 
