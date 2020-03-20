@@ -16,6 +16,17 @@ class SentenceTools:
         else:
             return pronoun
 
+    def convert_pronoun_as_subject(pronoun):
+        if pronoun == "he":
+            return "him"
+        elif pronoun == "she":
+            return "her"
+        elif pronoun == "they":
+            return "them"
+        else:
+            return pronoun
+
+
     @staticmethod
     def get_object_of_prep(parsed_sentence):
         for word in parsed_sentence:

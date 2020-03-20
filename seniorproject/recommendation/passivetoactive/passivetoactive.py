@@ -116,6 +116,7 @@ class PassiveAnalyzer(RecommendationEngine):
         citation = SentenceTools.get_citation(parsed_sentence)
         direct_obj = SentenceTools.get_direct_object(parsed_sentence)
         new_verb = PassiveAnalyzer.conjugate(verb)
+        new_subject = SentenceTools.convert_pronoun_as_subject(subject.lower())
 
         if new_actor and new_verb and subject:
             sentence = PassiveAnalyzer.assemble_new_sentence(
@@ -123,7 +124,7 @@ class PassiveAnalyzer(RecommendationEngine):
                 new_actor,
                 adverb,
                 new_verb,
-                subject,
+                new_subject,
                 direct_obj,
                 citation,
                 punct
