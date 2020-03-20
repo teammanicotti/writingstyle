@@ -3,9 +3,6 @@ from typing import List
 
 from spacy.tokens import Span
 
-from seniorproject.recommendation.simpletocompound.sentencecombination.conjunctions import \
-    Conjunctions
-
 __author__ = 'Devon Welcheck'
 
 
@@ -28,12 +25,24 @@ class Combine:
         # are not, assume a period instead.
         # Doing a reverse string find for a period is inaccurate--any
         # punctuation could end the sentence.
-        s1_punct = sentence1[-1].text.strip() if sentence1[-1].is_punct else '.'
+
+        # Get last token of sentence that is not whitespace.
+        s1_punct = '.'
         s1_punct_loc = sentence1[-1].idx - sentence1.start_char
+        for token in reversed(list(sentence1)):
+            if not token.is_space and token.is_punct:
+                s1_punct = token.text.strip()
+                s1_punct_loc = token.idx - sentence1.start_char
+                break
         s1_without_punct = sentence1.text[0: s1_punct_loc]
 
-        s2_punct = sentence2[-1].text.strip() if sentence2[-1].is_punct else '.'
+        s2_punct = '.'
         s2_punct_loc = sentence2[-1].idx - sentence2.start_char
+        for token in reversed(list(sentence2)):
+            if not token.is_space and token.is_punct:
+                s2_punct = token.text.strip()
+                s2_punct_loc = token.idx - sentence2.start_char
+                break
         s2_without_punct = sentence2.text[0: s2_punct_loc]
 
         s2_first_letter: str = s2_without_punct[0].lower() \
@@ -43,7 +52,6 @@ class Combine:
         punctuation = s1_punct if s1_punct == s2_punct else '.'
 
         return [
-            f"{s1_without_punct}, {conjunction} "
-            f"{s2_first_letter}{s2_without_punct[1:]}{punctuation}"
-            for conjunction in Conjunctions
+            f"{s1_without_punct}, ",
+            f" {s2_first_letter}{s2_without_punct[1:]}{punctuation}"
         ]
