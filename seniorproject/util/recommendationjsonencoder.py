@@ -1,7 +1,8 @@
 """JSONEncoder to return dictionary representation of custom objects."""
 import json
 
-from model.simpletocompoundrecommendation import SimpleToCompoundRecommendation
+from seniorproject.model.simpletocompoundrecommendation import \
+    SimpleToCompoundRecommendation
 from seniorproject.model.recommendation import Recommendation
 
 __author__ = 'Devon Welcheck'
