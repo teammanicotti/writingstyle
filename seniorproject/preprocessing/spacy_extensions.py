@@ -1,6 +1,5 @@
 """Contains custom extensions for spaCy"""
 import re
-from contextlib import contextmanager
 from itertools import zip_longest
 
 from spacy.language import Language
