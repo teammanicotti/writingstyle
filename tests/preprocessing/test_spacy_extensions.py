@@ -106,3 +106,26 @@ def test_page_only(spacy_instance):
         lambda x: x.text == '(p. 79)',
         list(list(parsed_sent.sents)[0]._.tokens_without_citations)
     )) == []
+
+
+def test_quotation_exclude(spacy_instance):
+    parsed_sent = spacy_instance('“The quick brown fox jumps over the lazy '
+                                 'dog”.'
+                                 )
+    tokens = list(parsed_sent)
+    assert len(tokens) == 2
+    assert len(list(parsed_sent.sents)[0]._.tokens_without_quotations) == 1
+
+
+def test_quotations_include(spacy_instance):
+    disabled = spacy_extensions.disable_quotation_exclude_extension(
+        spacy_instance
+    )
+    parsed_sent = spacy_instance('“The quick brown fox jumps over the lazy '
+                                 'dog”.'
+                                 )
+    disabled.restore()
+    tokens = list(parsed_sent)
+
+    assert len(tokens) != 2
+    assert len(list(parsed_sent.sents)[0]._.tokens_without_quotations) != 1
