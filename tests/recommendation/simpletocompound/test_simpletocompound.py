@@ -1,6 +1,8 @@
 import pytest
 from spacy.language import Language
 
+from seniorproject.recommendation.simpletocompound.sentencecombination.\
+    conjunctions import Conjunctions
 from seniorproject.recommendation.simpletocompound.model.sentencetype import \
     SentenceType
 from seniorproject.recommendation.simpletocompound.simpletocompound import \
@@ -149,17 +151,15 @@ def test_analyze_simple_sentences(
     similarity_classifier.determine_similarity = MagicMock(return_value=similarity_scores)
     simple_compound.similarity_classifier = similarity_classifier
 
-    assert simple_compound.analyze(
+    result = simple_compound.analyze(
         simple_sentences,
         similarity_threshold=0.1
-    )[0].new_values == [
-        'Mark went to the store, for his mom did not have food for dinner.',
-        'Mark went to the store, and his mom did not have food for dinner.',
-        'Mark went to the store, but his mom did not have food for dinner.',
-        'Mark went to the store, or his mom did not have food for dinner.',
-        'Mark went to the store, yet his mom did not have food for dinner.',
-        'Mark went to the store, so his mom did not have food for dinner.'
+    )[0]
+    assert result.new_parts == [
+        'Mark went to the store, ',
+        ' his mom did not have food for dinner.'
     ]
+    assert result.conjunctions == [e.value for e in Conjunctions]
 
 
 def test_analyze_simple_and_compound_sentence(

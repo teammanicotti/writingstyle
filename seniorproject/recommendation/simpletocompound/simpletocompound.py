@@ -3,8 +3,11 @@ import logging
 from typing import List
 from spacy.tokens import Span
 
+from seniorproject.model.simpletocompoundrecommendation import \
+    SimpleToCompoundRecommendation
+from seniorproject.recommendation.simpletocompound.sentencecombination\
+    .conjunctions import Conjunctions
 from seniorproject.model.document import Document
-from seniorproject.model.recommendation import Recommendation
 from seniorproject.model.recommendationtype import RecommendationType
 from seniorproject.model.sentence import Sentence
 from seniorproject.recommendation.recommendationengine import \
@@ -13,8 +16,8 @@ from seniorproject.recommendation.simpletocompound.model.sentencetype import \
     SentenceType
 from seniorproject.recommendation.simpletocompound.semanticsimilarity import \
     similarityclassifier
-from seniorproject.recommendation.simpletocompound.sentencecombination.combine import \
-    Combine
+from seniorproject.recommendation.simpletocompound.sentencecombination.combine \
+    import Combine
 
 __author__ = 'Devon Welcheck, Doanh Pham'
 
@@ -42,7 +45,8 @@ class SimpleToCompound(RecommendationEngine):
             )
         self.logger = logging.getLogger(__name__)
 
-    def analyze(self, doc: Document, **kwargs) -> List[Recommendation]:
+    def analyze(self, doc: Document, **kwargs) -> \
+            List[SimpleToCompoundRecommendation]:
         """Determines the sentence type and similarity of sentence pairs
 
         Analyzes the provides text using spaCy.  Then, the sentences are
@@ -86,17 +90,16 @@ class SimpleToCompound(RecommendationEngine):
                     similarity_score = similarity_scores.min().item()  # pylint: disable=no-member,line-too-long
 
                     if similarity_score >= kwargs.get('similarity_threshold'):
-                        results.append(Recommendation(
+                        results.append(SimpleToCompoundRecommendation(
                             RecommendationType.SIMPLE_TO_COMPOUND,
                             f'{first.text} {second.text}',
                             first.start_position,
                             second.end_position,
                             first.paragraph_idx,
-                            Combine.generate_combined(
-                                first.span,
-                                second.span
-                            ),
+                            [],
                             f'{first.text} {second.text}',
+                            [e.value for e in Conjunctions],
+                            Combine.generate_combined(first.span, second.span),
                             similarity_score
                         ))
             except Exception as ex:  # pylint: disable=broad-except

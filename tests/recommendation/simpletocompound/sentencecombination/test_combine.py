@@ -119,10 +119,10 @@ def sentence7_mock():
       0,
       12,
       [
-          spacy_token_mock('This'),
-          spacy_token_mock('is'),
-          spacy_token_mock('good'),
-          spacy_token_mock('!', is_punct=True, idx=12)
+          spacy_token_mock('This', is_space=False),
+          spacy_token_mock('is', is_space=False),
+          spacy_token_mock('good', is_space=False),
+          spacy_token_mock('!', is_punct=True, idx=12, is_space=False)
       ]
     )
 
@@ -202,70 +202,46 @@ def sentence12_mock():
 
 def test_generate_combined_third_person_pronoun(sentence1_mock, sentence2_mock):
     expected = [
-      'He is watching videos, for she is listening to the lecture.',
-      'He is watching videos, and she is listening to the lecture.',
-      'He is watching videos, but she is listening to the lecture.',
-      'He is watching videos, or she is listening to the lecture.',
-      'He is watching videos, yet she is listening to the lecture.',
-      'He is watching videos, so she is listening to the lecture.'
+        'He is watching videos, ',
+        ' she is listening to the lecture.',
     ]
     assert Combine.generate_combined(sentence1_mock, sentence2_mock) == expected
 
 
 def test_generate_combined_first_person_pronoun(sentence3_mock, sentence4_mock):
     expected = [
-      'He was more than happy to help me out, for I really appreciated it.',
-      'He was more than happy to help me out, and I really appreciated it.',
-      'He was more than happy to help me out, but I really appreciated it.',
-      'He was more than happy to help me out, or I really appreciated it.',
-      'He was more than happy to help me out, yet I really appreciated it.',
-      'He was more than happy to help me out, so I really appreciated it.'
+        'He was more than happy to help me out, ',
+        ' I really appreciated it.',
     ]
     assert Combine.generate_combined(sentence3_mock, sentence4_mock) == expected
 
 
 def test_generate_combined_proper_noun(sentence5_mock, sentence6_mock):
     expected = [
-      'Jeff wants to go to the store, for Carol wants to eat ice cream.',
-      'Jeff wants to go to the store, and Carol wants to eat ice cream.',
-      'Jeff wants to go to the store, but Carol wants to eat ice cream.',
-      'Jeff wants to go to the store, or Carol wants to eat ice cream.',
-      'Jeff wants to go to the store, yet Carol wants to eat ice cream.',
-      'Jeff wants to go to the store, so Carol wants to eat ice cream.'
+        'Jeff wants to go to the store, ',
+        ' Carol wants to eat ice cream.',
     ]
     assert Combine.generate_combined(sentence5_mock, sentence6_mock) == expected
 
 
 def test_exclamation_endings(sentence7_mock, sentence8_mock):
     expected = [
-        'This is good, for this is better!',
-        'This is good, and this is better!',
-        'This is good, but this is better!',
-        'This is good, or this is better!',
-        'This is good, yet this is better!',
-        'This is good, so this is better!',
+        'This is good, ',
+        ' this is better!',
     ]
     assert Combine.generate_combined(sentence7_mock, sentence8_mock) == expected
 
 def test_question_endings(sentence9_mock, sentence10_mock):
     expected = [
-        'Is this good, for is this better?',
-        'Is this good, and is this better?',
-        'Is this good, but is this better?',
-        'Is this good, or is this better?',
-        'Is this good, yet is this better?',
-        'Is this good, so is this better?',
+        'Is this good, ',
+        ' is this better?',
     ]
     assert Combine.generate_combined(sentence9_mock, sentence10_mock) == expected
 
 
 def test_differing_endings(sentence11_mock, sentence12_mock):
     expected = [
-        'This is good, for this is better.',
-        'This is good, and this is better.',
-        'This is good, but this is better.',
-        'This is good, or this is better.',
-        'This is good, yet this is better.',
-        'This is good, so this is better.',
+        'This is good, ',
+        ' this is better.',
     ]
     assert Combine.generate_combined(sentence11_mock, sentence12_mock) == expected
