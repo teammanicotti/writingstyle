@@ -8,9 +8,10 @@ import tensorflow_hub as hub
 import sentencepiece as spm
 from spacy.language import Language
 
-from seniorproject.preprocessing import spacy_extensions
+# from seniorproject.preprocessing import spacy_extensions
 from seniorproject.sharedstate.ensemble_pipeline import EnsemblePipeline
 from seniorproject.sharedstate.modellogic.formality import load_model
+
 
 def init_tf():
     """Load in Universal Sentence Encoder and SentencePiece modules.
@@ -59,8 +60,6 @@ if not os.path.isdir('logs'):
 logging.basicConfig(filename='logs/seniorproject.log', level=logging.INFO, filemode='a+')
 
 spacy_instance: Language = en_core_web_lg.load()
-spacy_extensions.enable_spacy_extensions()
-spacy_instance.add_pipe(spacy_extensions.retokenize_citations, before='parser')
 
 tf_session, tf_encodings, tf_input_placeholder, tf_sentence_piece_processor = \
     init_tf()

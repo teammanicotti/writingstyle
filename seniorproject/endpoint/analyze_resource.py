@@ -27,6 +27,8 @@ class AnalyzeResource:
         doc = self.document_parser.parse_document(
             req.media['text'],
             req.media['paragraphs'],
+            (req.media['excludeQuotations']
+             if 'excludeQuotations' in req.media else False)
         )
         recs = self.recommendation_handler.collect_recommendations(doc)
         resp.media = {'results': recs}
