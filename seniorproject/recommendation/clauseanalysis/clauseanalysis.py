@@ -15,7 +15,7 @@ class ClauseAnalysis(RecommendationEngine):
         super(ClauseAnalysis, self).__init__()
 
     # noinspection PyProtectedMember
-    def analyze(self, doc: Document) -> List[Recommendation]:
+    def analyze(self, doc: Document, **kwargs) -> List[Recommendation]:
         results = []
         paragraph_index = 0
 

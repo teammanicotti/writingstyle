@@ -16,7 +16,7 @@ class SentimentReversal(RecommendationEngine):
     def __init__(self):
         super(SentimentReversal, self).__init__()
 
-    def analyze(self, doc: Document) -> List[Recommendation]:
+    def analyze(self, doc: Document, **kwargs) -> List[Recommendation]:
         """
         Main analyze method - Reports all recommendations for sentiment reversal
         Ex: He was not happy -> He was unhappy
@@ -46,7 +46,7 @@ class SentimentReversal(RecommendationEngine):
         """
         results = []
 
-        for word in sentence:
+        for word in sentence._.tokens_without_citations:
             if word.text == 'not':
                 ants = SentimentReversal.get_antonyms_for_word(
                     sentence[word.i - sentence[0].i + 1].text)

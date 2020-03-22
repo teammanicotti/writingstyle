@@ -1,14 +1,14 @@
-import en_core_web_lg
 import pytest
 from spacy.language import Language
 
-from seniorproject.preprocessing import spacy_extensions
+from seniorproject.recommendation.simpletocompound.sentencecombination.\
+    conjunctions import Conjunctions
 from seniorproject.recommendation.simpletocompound.model.sentencetype import \
     SentenceType
 from seniorproject.recommendation.simpletocompound.simpletocompound import \
     SimpleToCompound
-from tests.util.spacy import spacy_instance
 from tests.util.model import *
+from tests.util.spacy import spacy_instance
 
 
 @pytest.fixture
@@ -36,6 +36,7 @@ def single_sentence_paragraph():
     sentence1 = spacy_span_mock(
         'Mark went to the store.'
     )
+    sentence1._.text_without_citations = text
     spacy_doc = spacy_doc_mock(
         [sentence1]
     )
@@ -141,14 +142,24 @@ def test_analyze_simple_sentences(
     simple_compound.sentence_type = MagicMock(
         side_effect=lambda _: SentenceType.SIMPLE)
 
-    assert simple_compound.analyze(simple_sentences)[0].new_values == [
-        'Mark went to the store, for his mom did not have food for dinner.',
-        'Mark went to the store, and his mom did not have food for dinner.',
-        'Mark went to the store, but his mom did not have food for dinner.',
-        'Mark went to the store, or his mom did not have food for dinner.',
-        'Mark went to the store, yet his mom did not have food for dinner.',
-        'Mark went to the store, so his mom did not have food for dinner.'
+    similarity_classifier = MagicMock()
+    similarity_scores = MagicMock()
+    min_mock = MagicMock()
+
+    min_mock.item = MagicMock(return_value=0.4)
+    similarity_scores.min = MagicMock(return_value=min_mock)
+    similarity_classifier.determine_similarity = MagicMock(return_value=similarity_scores)
+    simple_compound.similarity_classifier = similarity_classifier
+
+    result = simple_compound.analyze(
+        simple_sentences,
+        similarity_threshold=0.1
+    )[0]
+    assert result.new_parts == [
+        'Mark went to the store, ',
+        ' his mom did not have food for dinner.'
     ]
+    assert result.conjunctions == [e.value for e in Conjunctions]
 
 
 def test_analyze_simple_and_compound_sentence(
@@ -164,7 +175,10 @@ def test_analyze_simple_and_compound_sentence(
 
     simple_compound.sentence_type = MagicMock(side_effect=sent_type)
 
-    assert simple_compound.analyze(simple_and_compound) == []
+    assert simple_compound.analyze(
+        simple_and_compound,
+        similarity_threshold=0.1
+    ) == []
 
 
 def test_sentence_type_simple(

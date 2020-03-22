@@ -30,5 +30,9 @@ class AnalyzeResource:
             (req.media['excludeQuotations']
              if 'excludeQuotations' in req.media else False)
         )
-        recs = self.recommendation_handler.collect_recommendations(doc)
+        similarity_threshold = req.media['similarityThreshold']
+        recs = self.recommendation_handler.collect_recommendations(
+            doc,
+            similarity_threshold
+        )
         resp.media = {'results': recs}
