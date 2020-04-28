@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+  web:
+    build: .
+    volumes:
+      - type: bind
+        source: ./logs
+        target: /seniorproject/logs
+    environment:
+      GRAMMAR_API_URL: http://localhost:8081/v2/check
+  grammar:
+    build:
+      context: grammar
+    ports:
+      - "8081:8081"
