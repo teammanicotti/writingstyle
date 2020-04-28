@@ -1,0 +1,214 @@
+# Based on: https://blog.callr.tech/building-docker-images-with-gitlab-ci-best-practices/
+
+# Do not use "latest" here if you want this to work in the future.
+# Keep it tagged at a reproducible version.
+image: docker:19.03.1
+
+services:
+  - docker:19.03.1-dind
+
+variables:
+  DOCKER_DRIVER: overlay2
+  # Specify to Docker where to create the certificates, Docker will
+  # create them automatically on boot, and will create
+  # `/certs/client` that will be shared between the service and job
+  # container, thanks to volume mount from config.toml
+  DOCKER_TLS_CERTDIR: "/certs"
+
+stages:
+  - build
+  - test
+  - quality
+  - push
+  - deploy
+
+before_script:
+  # docker login asks for the password to be passed through stdin for security
+  # we use $CI_JOB_TOKEN here which is a special token provided by GitLab
+  - echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+#  - echo $DB_URL > ./.db_url
+#  - echo $DB_USER > ./.db_user
+#  - echo $DB_PASSWORD > ./.db_password
+#  - echo $DB_NAME > ./.db_name
+
+Build_seniorproject:
+  stage: build
+  script:
+    # fetches the latest image (not failing if image is not found)
+    - docker pull $CI_REGISTRY_IMAGE:latest || true
+    # builds the project, passing proxy variables, and vcs vars for LABEL
+    # notice the cache-from, which is going to use the image we just pulled locally
+    # the built image is tagged locally with the commit SHA, and then pushed to
+    # the GitLab registry
+    - >
+      docker build
+      --pull
+      --build-arg VCS_REF=$CI_COMMIT_SHA
+      --build-arg VCS_URL=$CI_PROJECT_URL
+      --cache-from $CI_REGISTRY_IMAGE:latest
+      --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+      .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  tags:
+    - dikdik
+
+Build_seniorproject_grammar:
+  stage: build
+  script:
+    # fetches the latest image (not failing if image is not found)
+    - docker pull $CI_REGISTRY_IMAGE/grammar:latest || true
+    # builds the project, passing proxy variables, and vcs vars for LABEL
+    # notice the cache-from, which is going to use the image we just pulled locally
+    # the built image is tagged locally with the commit SHA, and then pushed to
+    # the GitLab registry
+    - cd grammar
+    - >
+      docker build
+      --pull
+      --build-arg VCS_REF=$CI_COMMIT_SHA
+      --build-arg VCS_URL=$CI_PROJECT_URL
+      --cache-from $CI_REGISTRY_IMAGE/grammar:latest
+      --tag $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_SHA
+      .
+    - docker push $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_SHA
+  tags:
+    - dikdik
+
+test:
+  stage: test
+  image: tiangolo/docker-with-compose
+  script:
+     - export SENIORPROJECT_IMAGE=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+     - export GRAMMAR_IMAGE=$CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_SHA
+     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+     - docker pull $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_SHA
+     - docker-compose -f docker-compose.yml -f docker-compose-ci.yml run web pytest --cov=seniorproject tests/
+#     - docker run $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA pytest --cov=seniorproject tests/
+  tags:
+    - dikdik
+
+quality:
+  stage: quality
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker run -w / $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA pylint --rcfile=/seniorproject/.pylintrc /seniorproject/seniorproject
+  tags:
+    - dikdik
+
+# Here, the goal is to tag the "master" branch as "latest"
+Push latest:
+  variables:
+    # We are just playing with Docker here.
+    # We do not need GitLab to clone the source code.
+    GIT_STRATEGY: none
+  stage: push
+  only:
+    # Only "master" should be tagged "latest"
+    - master
+  script:
+    # Because we have no guarantee that this job will be picked up by the same runner
+    # that built the image in the previous step, we pull it again locally
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    # Then we tag it "latest"
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:latest
+    # Annnd we push it.
+    - docker push $CI_REGISTRY_IMAGE:latest
+  tags:
+    - dikdik
+
+# Here, the goal is to tag the "develop" branch as "develop"
+#Push develop:
+#  variables:
+#    # We are just playing with Docker here.
+#    # We do not need GitLab to clone the source code.
+#    GIT_STRATEGY: none
+#  stage: push
+#  only:
+#    # Only "develop" should be tagged "develop"
+#    - develop
+#  script:
+#    # Because we have no guarantee that this job will be picked up by the same runner
+#    # that built the image in the previous step, we pull it again locally
+#    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+#    # Then we tag it "latest"
+#    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:develop
+#    # Annnd we push it.
+#    - docker push $CI_REGISTRY_IMAGE:develop
+#  tags:
+#    - dikdik
+
+# Finally, the goal here is to Docker tag any Git tag
+# GitLab will start a new pipeline everytime a Git tag is created, which is pretty awesome
+Push tag:
+  variables:
+    # Again, we do not need the source code here. Just playing with Docker.
+    GIT_STRATEGY: none
+  stage: push
+#  only:
+    # We want this job to be run on tags and develop only.
+#    - tags
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+  tags:
+    - dikdik
+
+Push tag grammar:
+  variables:
+    # Again, we do not need the source code here. Just playing with Docker.
+    GIT_STRATEGY: none
+  stage: push
+#  only:
+    # We want this job to be run on tags and develop only.
+#    - tags
+  script:
+    - docker pull $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE/grammar:$CI_COMMIT_REF_NAME
+  tags:
+    - dikdik
+
+# deploy:
+#   stage: deploy
+#   before_script:
+#     ##
+#     ## Install ssh-agent if not already installed, it is required by Docker.
+#     ## (change apt-get to yum if you use an RPM-based image)
+#     ##
+#     - "which ssh-agent || ( apk update && apk add openssh-client )"
+#     - "which rsync || (apk add rsync) "
+
+#     ##
+#     ## Run ssh-agent (inside the build environment)
+#     ##
+#     - eval $(ssh-agent -s)
+
+#     ##
+#     ## Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+#     ## We're using tr to fix line endings which makes ed25519 keys work
+#     ## without extra base64 encoding.
+#     ## https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
+#     ##
+#     - echo "$DD_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+
+#     ##
+#     ## Create the SSH directory and give it the right permissions
+#     ##
+#     - mkdir -p ~/.ssh
+#     - chmod 700 ~/.ssh
+
+#     ##
+#     ## Assuming you created the SSH_KNOWN_HOSTS variable, uncomment the
+#     ## following two lines.
+#     ##
+#     - echo "$DD_SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+#     - chmod 644 ~/.ssh/known_hosts
+#   only:
+#     - develop
+#   script:
+# #    - rsync -v -z -r -e ssh ./docker-compose.yml dw5005@manicotti.se.rit.edu:/home/dw5005/dockerScripts/docker-compose.yml
+# #    - rsync -v -z -r -e ssh ./docker-compose-develop.yml dw5005@manicotti.se.rit.edu:/home/dw5005/dockerScripts/docker-compose-develop.yml
+# #    - rsync -v -z -r -e ssh ./Dockerfile dw5005@manicotti.se.rit.edu:/home/dw5005/dockerScripts/Dockerfile
+#     - ssh -tt dwelcheck@dikdik.lan "cd /mnt/data/proj/seniorproject; docker-compose -f docker-compose.yml -f docker-compose-develop.yml down; docker-compose -f docker-compose.yml -f docker-compose-develop.yml pull; docker-compose -f docker-compose.yml -f docker-compose-develop.yml up --build -d"
+#     - echo 0

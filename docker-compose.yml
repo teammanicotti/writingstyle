@@ -1,0 +1,10 @@
+version: "3.7"
+services:
+  web:
+    ports:
+      - "8000:8000"
+    environment:
+      GRAMMAR_API_URL: http://grammar:8081/v2/check
+    depends_on:
+      - grammar
+  grammar:

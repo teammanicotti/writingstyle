@@ -1,0 +1,16 @@
+version: '3.7'
+services:
+  web:
+    image: registry.gitlab.com/seniorprojectntid/seniorproject:develop
+    secrets:
+      - sentry
+    volumes:
+      - type: bind
+        source: ./logs
+        target: /seniorproject/logs
+  grammar:
+    image: registry.gitlab.com/seniorprojectntid/seniorproject/grammar:develop
+
+secrets:
+  sentry:
+    file: ./.sentry_dsn
