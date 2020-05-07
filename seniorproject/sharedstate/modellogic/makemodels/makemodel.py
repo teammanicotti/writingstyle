@@ -17,8 +17,8 @@ import pickle
 from sklearn import metrics
 
 # Modify this to change the output file
-OUT_MODEL_NAME = "gyafc_model_1.mdl"  # Will be output to the root dir of the project
-TRAINING_FILE_NAME = os.sep.join(["makemodels", "data", "gyafc.csv"])
+OUT_MODEL_NAME = "mturk_model_1.mdl"  # Will be output to the root dir of the project
+TRAINING_FILE_NAME = os.sep.join(["makemodels", "data", "mturk_experiment_1.csv"])
 
 # Model Logic Module
 model_logic = formality
